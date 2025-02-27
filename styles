@@ -1,0 +1,101 @@
+.header {
+    background: #777;
+    padding: 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    position: relative;
+}
+
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon {
+    cursor: pointer;
+    position: relative;
+}
+
+.icon img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background: white;
+    color: black;
+    padding: 10px;
+    width: 200px;    
+}
+.icon:hover .dropdown {
+    display: block;
+}
+
+.notification-item, .profile-item {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.notification-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-text .name {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.notification-text .message {
+    font-size: 12px;
+    color: gray;
+}
+
+.notification-item:hover, .profile-item:hover {
+    background: #f5f5f5;
+    cursor: pointer;
+}
+
+.profile {
+    display: flex;
+    align-items: center; 
+    gap: 8px;
+    position: relative; 
+}
+
+.profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.profile-name {
+    font-size: 14px;    
+}
+
+.profile:hover .dropdown {
+    display: block;
+    left: 3px;
+    width: 150px;
+}
