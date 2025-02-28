@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="styles/styles.css">
+
+    <title>Student</title>
+</head>
+
+<header class = "header">
+
+    <!--Логотип-->
+    <div class = "logo-container"> 
+        <img src = "https://img.freepik.com/premium-photo/drawing-dragon-flying-open-book_927978-151738.jpg">
+    </div>
+
+    <div class = "menu">
+
+        <!--Повідомлення-->
+        <div class = "icon-container">
+        <div class = "icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png">
+            <div class = "dropdown">
+                <div class = "notification-item">
+                    <img src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png">
+                    <div class = "notification-text">
+                        <span class = "name"> Admin </span>
+                        <span class = "message"> Hello!</span>
+                    </div>
+                </div>
+                <div class = "notification-item">
+                    <img src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png">
+                    <div class = "notification-text">
+                        <span class = "name"> Anna S. </span>
+                        <span class = "message"> Hello!</span>
+                    </div>
+                </div>
+                <div class = "notification-item">
+                    <img src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png">
+                    <div class = "notification-text">
+                        <span class = "name"> Maria T. </span>                
+                        <span class = "message"> Hello!</span>
+                    </div>
+                </div>          
+            </div>
+        </div>
+        </div>
+
+        <!--Профіль-->
+        <div class = "profile-container">
+        <div class = "profile">
+            <img src = "https://cdn-icons-png.flaticon.com/512/6522/6522516.png">
+            <span class = "profile-name"> Bohdana Fedorchuk</span>
+
+            <div class = "dropdown">
+                <div class = "profile-item"> Profile </div>
+                <div class = "profile-item"> Log out </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</header>
+
+<body>
+ 
+    <div class = "container">
+    <!--Меню-->
+    <nav class = "sidebar">
+        <ul>
+            <a href = "index.html">Dashboard</a>
+            <a href = "students.html">Students</a>
+            <a href = "tasks.html">Tasks</a>
+        </ul>
+    </nav>
+
+    <!--Сторінка-->
+    <div class = "students-container">
+    <h2 class = "name">Students</h2>
+        <table>
+            <tr>                
+                <th></th>
+                <th scope="col">Group</th>
+                <th scope="col">Name</th>
+                <th scope="col">Gender</th>
+                <th scope="col">Birthday</th>
+                <th scope="col">Status</th>
+                <th scope="col">Option</th>
+            </tr>
+            <tr>
+                <td><input type = "checkbox"></td>
+                <td><b>PZ-21</b></td>
+                <td><b>John Smith</b></td>
+                <td>M</td>
+                <td><b>12.07.2004</b></td>
+                <td class="status"><span class = "status-dot green"></span></td>
+                <td class = "option">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete">
+                </td>
+            </tr>
+            <tr>
+                <td><input type = "checkbox"></td>
+                <td><b>PZ-22</b></td>
+                <td><b>Anna Moon</b></td>
+                <td>M</td>
+                <td><b>21.11.2004</b></td>
+                <td class="status"><span class = "status-dot green"></span></td>
+                <td class = "option">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete">
+                </td>
+            </tr>        
+        </table>
+    </div>
+    </div>
+
+</body>
