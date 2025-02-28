@@ -10,12 +10,17 @@
 </head>
 
 <header class = "header">
-    <div class = "logo"> CMS</div>
+
+    <!--Логотип-->
+    <div class = "logo-container"> 
+        <img src = "https://img.freepik.com/premium-photo/drawing-dragon-flying-open-book_927978-151738.jpg">
+    </div>
 
     <div class = "menu">
 
+        <!--Повідомлення-->
+        <div class = "icon-container">
         <div class = "icon">
-            <!--Повідомлення-->
             <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png">
             <div class = "dropdown">
                 <div class = "notification-item">
@@ -41,9 +46,11 @@
                 </div>          
             </div>
         </div>
+        </div>
 
+        <!--Профіль-->
+        <div class = "profile-container">
         <div class = "profile">
-            <!--Профіль-->
             <img src = "https://cdn-icons-png.flaticon.com/512/6522/6522516.png">
             <span class = "profile-name"> Bohdana Fedorchuk</span>
 
@@ -52,12 +59,25 @@
                 <div class = "profile-item"> Log out </div>
             </div>
         </div>
-
+        </div>
     </div>
 </header>
 
 <body>
  
+    <!--Меню-->
+    <nav class = "sidebar">
+        <ul>
+            <a href = "index.html">Dashboard</a>
+            <a href = "students.html">Students</a>
+            <a href = "tasks.html">Tasks</a>
+        </ul>
+    </nav>
+
+    <h1>Dashboard</h1>
+    <p>info</p>
+
+
 
 </body>
 </html>
