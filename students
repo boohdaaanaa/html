@@ -78,6 +78,10 @@
     <!--Сторінка-->
     <div class = "students-container">
     <h2 class = "name">Students</h2>
+    <!--Кнопка для нового студента-->
+    <button class = "add-student-btn" onclick="openModal()">+</button>
+
+    <!--Таблиця-->
         <table>
             <tr>                
                 <th></th>
@@ -93,7 +97,7 @@
                 <td><b>PZ-21</b></td>
                 <td><b>John Smith</b></td>
                 <td>M</td>
-                <td><b>12.07.2004</b></td>
+                <td><b>12.07.2006</b></td>
                 <td class="status"><span class = "status-dot green"></span></td>
                 <td class = "option">
                     <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit">
@@ -104,16 +108,92 @@
                 <td><input type = "checkbox"></td>
                 <td><b>PZ-22</b></td>
                 <td><b>Anna Moon</b></td>
-                <td>M</td>
-                <td><b>21.11.2004</b></td>
+                <td>F</td>
+                <td><b>21.11.2006</b></td>
                 <td class="status"><span class = "status-dot green"></span></td>
                 <td class = "option">
                     <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit">
                     <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete">
                 </td>
-            </tr>        
+            </tr> 
+            <tr>
+                <td><input type = "checkbox"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>      
+            <tr>
+                <td><input type = "checkbox"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr> 
         </table>
+    </div>
+
+    <!--form for add student-->
+    <div id = "addStudent" class = "modal">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h3>Add student</h3>
+                <span class = "close" onclick = "closeModal()">&times;</span>
+            </div>
+            <form class = "modal-form">
+                <label for = "group">Group</label>
+                <select id = "group" name = "group">
+                    <option value = "" disabled selected>Select Group</option>
+                    <option value = "PZ-21">PZ-21</option>
+                    <option value = "PZ-22">PZ-22</option>
+                </select>
+
+                <label for = "name">Firs name</label>
+                <input type = "text" id = "name" name = "name" placeholder="">
+
+                <label for = "surname">Last name</label>
+                <input for = "text" id = "surname" name = "surname" placeholder="">
+
+                <label for = "gender">Gender</label>
+                <select id = "gender" name = "gender">
+                    <option value="" disabled selected>Select Gender</option>
+                    <option value = "M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+
+                <label for = "birthday">Birthday</label>
+                <input type = "date" id = "birthday" name = "birthday"> 
+
+                <div class = "modal-buttons">
+                    <button type = "button" class = "btn btn-cancel" onclick="closeModal()">OK</button>
+                    <button type = "submit" class = "btn btn-create">Create</button>
+                </div>
+            </form>
+        </div>
     </div>
     </div>
 
+    <script> 
+        var modal = document.getElementById("addStudent");
+
+        function openModal(){
+            modal.style.display = "block";
+        }
+
+        function closeModal(){
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event){
+            if(event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
+
+
