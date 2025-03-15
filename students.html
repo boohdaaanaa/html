@@ -85,11 +85,7 @@
     <h2 class = "name">Students</h2>
     <!--Кнопка для нового студента-->
     <button class = "add-student-btn" onclick="openModal()">+</button>
-    
-    <!-- Кнопки дій -->
-    <button id="deleteSelected" disabled onclick="deleteSelected()"></button>
-    <button id="editSelected" disabled onclick="editSelected()"></button>
-
+       
     <!--Таблиця-->
         <table>
             <tr>                
@@ -109,8 +105,8 @@
                 <td><b>17.03.2006</b></td>
                 <td class="status"><span class = "status-dot green"></span></td>
                 <td class = "option">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="editRow(this)" disabled>
-                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteRow(this)" disabled>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()" disabled>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
                 </td>
             </tr>
             <tr>
@@ -121,8 +117,8 @@
                 <td><b>21.11.2006</b></td>
                 <td class="status"><span class = "status-dot gray"></span></td>
                 <td class = "option">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="editRow(this)" disabled>
-                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteRow(this)" disabled>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" id = "delete-btn" title="Edit" class="edit-btn" onclick="openModal()" disabled>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" id = "edit-btn" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
                 </td>
             </tr> 
             <tr>
@@ -142,7 +138,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-            </tr> 
+            </tr>    
         </table>
 
         <!--Table pages-->
