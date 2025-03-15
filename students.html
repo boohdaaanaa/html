@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles.css">
 
     <title>Student</title>
 </head>
@@ -13,16 +13,21 @@
 
     <!--Логотип-->
     <div class = "logo-container"> 
+        <a href="students.html">
         <img src = "https://img.freepik.com/premium-photo/drawing-dragon-flying-open-book_927978-151738.jpg">
+        </a>
     </div>
 
     <div class = "menu">
 
         <!--Повідомлення-->
         <div class = "icon-container">
-        <div class = "icon">
-            <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png">
-            <div class = "dropdown">
+            <div class = "icon" id = "bellIcon">
+                <a href = "messages.html" onclick="clearNotificationIndicator()">
+                <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png">
+                </a>
+                <div id = "notificationInd" class = "notification-ind"></div>
+                <div class = "dropdown">
                 <div class = "notification-item">
                     <img src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png">
                     <div class = "notification-text">
@@ -69,9 +74,9 @@
     <!--Меню-->
     <nav class = "sidebar">
         <ul>
-            <a href = "index.html">Dashboard</a>
-            <a href = "students.html">Students</a>
-            <a href = "tasks.html">Tasks</a>
+            <a href = "index.html" class = "nav-link">Dashboard</a>
+            <a href = "students.html" class = "nav-link">Students</a>
+            <a href = "tasks.html" class = "nav-link">Tasks</a>
         </ul>
     </nav>
 
@@ -80,11 +85,15 @@
     <h2 class = "name">Students</h2>
     <!--Кнопка для нового студента-->
     <button class = "add-student-btn" onclick="openModal()">+</button>
+    
+    <!-- Кнопки дій -->
+    <button id="deleteSelected" disabled onclick="deleteSelected()"></button>
+    <button id="editSelected" disabled onclick="editSelected()"></button>
 
     <!--Таблиця-->
         <table>
             <tr>                
-                <th></th>
+                <th><input type = "checkbox" id = "selectAll"></th>
                 <th scope="col">Group</th>
                 <th scope="col">Name</th>
                 <th scope="col">Gender</th>
@@ -93,31 +102,31 @@
                 <th scope="col">Option</th>
             </tr>
             <tr>
-                <td><input type = "checkbox"></td>
+                <td><input type = "checkbox" class = "rowCheckbox"></td>
                 <td><b>PZ-21</b></td>
-                <td><b>John Smith</b></td>
-                <td>M</td>
-                <td><b>12.07.2006</b></td>
+                <td><b>Bohdana Fedorchuk</b></td>
+                <td>F</td>
+                <td><b>17.03.2006</b></td>
                 <td class="status"><span class = "status-dot green"></span></td>
                 <td class = "option">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="editRow(this)" disabled>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteRow(this)" disabled>
                 </td>
             </tr>
             <tr>
-                <td><input type = "checkbox"></td>
+                <td><input type = "checkbox" class = "rowCheckbox"></td>
                 <td><b>PZ-22</b></td>
                 <td><b>Anna Moon</b></td>
                 <td>F</td>
                 <td><b>21.11.2006</b></td>
-                <td class="status"><span class = "status-dot green"></span></td>
+                <td class="status"><span class = "status-dot gray"></span></td>
                 <td class = "option">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="editRow(this)" disabled>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteRow(this)" disabled>
                 </td>
             </tr> 
             <tr>
-                <td><input type = "checkbox"></td>
+                <td><input type = "checkbox" class = "rowCheckbox"></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -126,7 +135,7 @@
                 <td></td>
             </tr>      
             <tr>
-                <td><input type = "checkbox"></td>
+                <td><input type = "checkbox" class = "rowCheckbox"></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -135,6 +144,17 @@
                 <td></td>
             </tr> 
         </table>
+
+        <!--Table pages-->
+        <div class="pages">
+            <button onclick="changePage(-1)">&lt;</button>
+            <button class="page-btn active" onclick="goToPage(1)">1</button>
+            <button class="page-btn" onclick="goToPage(2)">2</button>
+            <button class="page-btn" onclick="goToPage(3)">3</button>
+            <button class="page-btn" onclick="goToPage(4)">4</button>
+            <button onclick="changePage(1)">&gt;</button>
+        </div>
+
     </div>
 
     <!--form for add student-->
@@ -169,7 +189,7 @@
                 <input type = "date" id = "birthday" name = "birthday"> 
 
                 <div class = "modal-buttons">
-                    <button type = "button" class = "btn btn-cancel" onclick="closeModal()">OK</button>
+                    <button type = "button" class = "btn btn-ok" onclick="closeModal()">OK</button>
                     <button type = "submit" class = "btn btn-create">Create</button>
                 </div>
             </form>
@@ -177,23 +197,6 @@
     </div>
     </div>
 
-    <script> 
-        var modal = document.getElementById("addStudent");
-
-        function openModal(){
-            modal.style.display = "block";
-        }
-
-        function closeModal(){
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event){
-            if(event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
+  
+<script src="scripts.js"></script>
 </body>
-
-
