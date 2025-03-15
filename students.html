@@ -104,7 +104,7 @@
                 <td>F</td>
                 <td><b>17.03.2006</b></td>
                 <td class="status"><span class = "status-dot green"></span></td>
-                <td class = "option">
+                <td class="option">
                     <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()" disabled>
                     <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
                 </td>
@@ -116,9 +116,9 @@
                 <td>F</td>
                 <td><b>21.11.2006</b></td>
                 <td class="status"><span class = "status-dot gray"></span></td>
-                <td class = "option">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" id = "delete-btn" title="Edit" class="edit-btn" onclick="openModal()" disabled>
-                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" id = "edit-btn" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
+                <td class="option">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()" disabled>
+                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
                 </td>
             </tr> 
             <tr>
@@ -160,7 +160,7 @@
                 <h3>Add student</h3>
                 <span class = "close" onclick = "closeModal()">&times;</span>
             </div>
-            <form class = "modal-form">
+            <form class = "modal-body">
                 <label for = "group">Group</label>
                 <select id = "group" name = "group">
                     <option value = "" disabled selected>Select Group</option>
@@ -193,6 +193,23 @@
     </div>
     </div>
 
+
+    <!--modal form delete-->
+    <div id="confirmDeleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Warning</h3>
+                <span class="close" onclick="closeConfirmModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to delete user <span id="userName"></span>?</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeConfirmModal()">Cancel</button>
+                <button class="btn btn-ok" onclick="confirmDelete()">OK</button>
+            </div>
+        </div>
+    </div>
   
 <script src="scripts.js"></script>
 </body>

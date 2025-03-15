@@ -63,11 +63,18 @@ function goToPage(pageNumber) {
 
 document.addEventListener("DOMContentLoaded", function() {
     const selectAllCheckbox = document.getElementById("selectAll");
-    const deleteButton = document.getElementById("delete-btn");
-    const editButton = document.getElementById("edit-btn");
+    const deleteButtons = document.querySelectorAll(".delete-btn"); // Використовуємо клас замість ID
+    const editButtons = document.querySelectorAll(".edit-btn");     // Використовуємо клас замість ID
     const modal = document.getElementById("addStudent");
     const okButton = document.querySelector(".btn-ok");
     const createButton = document.querySelector(".btn-create");
+    const confirmModal = document.getElementById("confirmDeleteModal");
+    const userNameSpan = document.getElementById("userName");
+
+    if (!confirmModal || !userNameSpan) {
+        console.error("Confirm modal or userNameSpan not found!");
+        return;
+    }
 
     function getRowCheckboxes() {
         return document.querySelectorAll(".rowCheckbox");
@@ -75,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function updateButtons() {
         const checkedRows = document.querySelectorAll(".rowCheckbox:checked");
-        deleteButton.disabled = checkedRows.length === 0;
-        editButton.disabled = checkedRows.length !== 1;
+        deleteButtons.forEach(btn => btn.disabled = checkedRows.length === 0);
+        editButtons.forEach(btn => btn.disabled = checkedRows.length !== 1);
     }
 
     function updateSelectAllCheckbox() {
@@ -101,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function() {
     function attachCheckboxListeners() {
         const allCheckboxes = getRowCheckboxes();
         allCheckboxes.forEach(checkbox => {
-            // Видаляємо попередні слухачі, щоб уникнути дублювання
             checkbox.removeEventListener("change", handleCheckboxChange);
             checkbox.addEventListener("change", handleCheckboxChange);
         });
@@ -118,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const editBtn = row.querySelector(".edit-btn");
         const deleteBtn = row.querySelector(".delete-btn");
 
-        if (editBtn && deleteBtn) { // Перевіряємо, чи є кнопки в рядку
+        if (editBtn && deleteBtn) {
             if (checkbox.checked) {
                 editBtn.removeAttribute("disabled");
                 deleteBtn.removeAttribute("disabled");
@@ -129,21 +135,55 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // Відкриття модального вікна для підтвердження видалення
+    function showConfirmDelete(row) {
+        if (!row) return;
+        const nameCell = row.querySelector("td:nth-child(3)"); // Індекс колонки з ім'ям
+        const fullName = nameCell ? nameCell.textContent.trim() : "Unknown";
+        userNameSpan.textContent = fullName;
+        confirmModal.style.display = "block";
+        window.currentRow = row; // Зберігаємо поточний рядок для подальшого видалення
+    }
+
+    // Закриття модального вікна підтвердження
+    window.closeConfirmModal = function() {
+        confirmModal.style.display = "none";
+        delete window.currentRow; // Очищаємо посилання на рядок
+    };
+
+    // Підтвердження видалення
+    window.confirmDelete = function() {
+        if (window.currentRow) {
+            window.currentRow.closest("tr").remove();
+            closeConfirmModal();
+            updateButtons();
+            updateSelectAllCheckbox();
+            attachCheckboxListeners();
+        }
+    };
+
     // Видалення вибраних студентів
     window.deleteSelected = function() {
-        document.querySelectorAll(".rowCheckbox:checked").forEach(row => row.closest("tr").remove());
-        updateButtons();
-        updateSelectAllCheckbox();
-        attachCheckboxListeners();
+        const checkedRows = document.querySelectorAll(".rowCheckbox:checked");
+        if (checkedRows.length > 0) {
+            if (checkedRows.length > 1) {
+                // Якщо вибрано більше одного рядка, видаляємо всі одразу
+                checkedRows.forEach(checkbox => checkbox.closest("tr").remove());
+                updateButtons();
+                updateSelectAllCheckbox();
+                attachCheckboxListeners();
+            } else {
+                // Якщо вибрано один рядок, показуємо модальне вікно
+                const firstCheckedRow = checkedRows[0].closest("tr");
+                showConfirmDelete(firstCheckedRow);
+            }
+        }
     };
 
     // Видалення одного студента через кнопку в таблиці
     window.deleteRow = function(btn) {
         const row = btn.closest("tr");
-        row.remove();
-        updateButtons();
-        updateSelectAllCheckbox();
-        attachCheckboxListeners();
+        showConfirmDelete(row); // Показуємо модальне вікно перед видаленням
     };
 
     // Редагування одного вибраного студента
@@ -155,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    // Додавання нового студента
+    // Додавання нового студента через кнопку "Create"
     window.createStudent = function(event) {
         event.preventDefault();
 
@@ -191,8 +231,8 @@ document.addEventListener("DOMContentLoaded", function() {
         birthdayCell.innerHTML = `<b>${birthday}</b>`;
         statusCell.innerHTML = '<span class="status-dot gray"></span>';
         optionCell.innerHTML = `
-            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" id = "delete-btn" title="Edit" class="edit-btn" onclick="openModal()" disabled>
-            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" id = "edit-btn" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
+            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()" disabled>
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
         `;
 
         const newCheckbox = checkboxCell.querySelector(".rowCheckbox");
@@ -209,6 +249,7 @@ document.addEventListener("DOMContentLoaded", function() {
         attachCheckboxListeners();
     };
 
+    // Додавання нового студента через кнопку "OK"
     window.okStudent = function(event) {
         event.preventDefault();
 
@@ -221,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (group && name && surname && gender && birthday) {
             var table = document.querySelector("table tbody");
             var newRow = table.insertRow(3);
-    
+
             var checkboxCell = newRow.insertCell(0);
             var groupCell = newRow.insertCell(1);
             var nameCell = newRow.insertCell(2);
@@ -229,10 +270,10 @@ document.addEventListener("DOMContentLoaded", function() {
             var birthdayCell = newRow.insertCell(4);
             var statusCell = newRow.insertCell(5);
             var optionCell = newRow.insertCell(6);
-    
+
             statusCell.classList.add("status");
             optionCell.classList.add("option");
-    
+
             checkboxCell.innerHTML = '<input type="checkbox" class="rowCheckbox">';
             groupCell.innerHTML = `<b>${group}</b>`;
             nameCell.innerHTML = `<b>${name} ${surname}</b>`;
@@ -240,24 +281,23 @@ document.addEventListener("DOMContentLoaded", function() {
             birthdayCell.innerHTML = `<b>${birthday}</b>`;
             statusCell.innerHTML = '<span class="status-dot gray"></span>';
             optionCell.innerHTML = `
-            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" id = "delete-btn" title="Edit" class="edit-btn" onclick="openModal()" disabled>
-            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" id = "edit-btn" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
+                <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()" disabled>
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
             `;
-    
+
             const newCheckbox = checkboxCell.querySelector(".rowCheckbox");
             newCheckbox.addEventListener("change", handleCheckboxChange);
-    
+
             if (selectAllCheckbox.checked) {
                 newCheckbox.checked = true;
                 toggleRowButtons(newCheckbox);
             }
-    
+
             closeModal();
             updateButtons();
             updateSelectAllCheckbox();
             attachCheckboxListeners();
         }
-        
     };
 
     function openModal() {
@@ -270,7 +310,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.onclick = function(event) {
         if (event.target == modal) {
-            modal.style.display = "none";
+            closeModal();
+        } else if (event.target == confirmModal) {
+            closeConfirmModal();
         }
     };
 

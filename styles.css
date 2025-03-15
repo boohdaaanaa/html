@@ -259,8 +259,7 @@ th {
     left: 0;
     top: 0;
     width: 500px;
-    height: 600px;
-    display: flex;
+    height: 600px;    
     justify-content: center;
     align-items: center;    
 }
@@ -293,18 +292,18 @@ th {
     float: left;
 }
 
-.modal-form {
+.modal-body {
     display: flex;
     flex-direction: column;    
 }
 
-.modal-form label {
+.modal-body label {
     font-size: 12px;
     font-weight: bold;
    
 }
 
-.modal-form input, .modal-form select {
+.modal-body input, .modal-body select {
     padding: 8px;
     margin-top: 5px;
     border: 1 px solid #ccc;
@@ -333,6 +332,10 @@ th {
 .btn-create {
     background-color: #4CAF50;
     color: white;
+}
+
+.btn-cancel {
+    background-color: #fbf9f9b2;
 }
 
 .pages {
