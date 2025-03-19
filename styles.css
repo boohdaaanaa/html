@@ -8,9 +8,11 @@
     position: relative;
 }
 
-.logo-container {
-    display: flex;
-    align-items: center;
+.burger-menu {
+    display: none; 
+    cursor: pointer;
+    font-size: 24px;
+    padding: 10px;
 }
 
 .logo-container img {
@@ -49,8 +51,8 @@
     background: white;
     color: black;
     padding: 10px;
-    width: 200px;  
-    border-radius: 5px;  
+    width: 200px;
+    border-radius: 5px;
 }
 
 .icon:hover .dropdown {
@@ -71,18 +73,18 @@
 
 .notification-item img {
     width: 30px;
-    height: 30px;   
+    height: 30px;
     border-radius: 50%;
 }
 
 .notification-text {
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
 }
 
 .notification-text .name {
     font-weight: bold;
-    font-size: 14px;   
+    font-size: 14px;
 }
 
 .notification-text .message {
@@ -95,7 +97,7 @@
     cursor: pointer;
 }
 
-.notification-ind{
+.notification-ind {
     position: absolute;
     top: 0px;
     right: 1px;
@@ -103,15 +105,15 @@
     height: 10px;
     background-color: red;
     border-radius: 50%;
-    border: 2px solid white;    
+    border: 2px solid white;
 }
 
 @keyframes shake {
-    0% {transform: rotate(0);}
-    25% {transform: rotate(15deg);}
-    50% {transform: rotate(0);}
-    75% {transform: rotate(-15deg);}
-    100% {transform: rotate(0);}
+    0% { transform: rotate(0); }
+    25% { transform: rotate(15deg); }
+    50% { transform: rotate(0); }
+    75% { transform: rotate(-15deg); }
+    100% { transform: rotate(0); }
 }
 
 .shake-animation {
@@ -125,9 +127,9 @@
 
 .profile {
     display: flex;
-    align-items: center; 
+    align-items: center;
     gap: 8px;
-    position: relative; 
+    position: relative;
 }
 
 .profile img {
@@ -137,7 +139,7 @@
 }
 
 .profile-name {
-    font-size: 14px;    
+    font-size: 14px;
 }
 
 .profile:hover .dropdown {
@@ -146,20 +148,33 @@
     width: 150px;
 }
 
+.container {
+    display: flex;
+    height: 100vh;
+}
+
 .sidebar {
-    display: block;   
+    display: block;
     width: 170px;
     padding: 5px;
     background: #f4f4f4;
-    
+    transition: transform 0.3s ease-in-out;
+}
+
+.close-sidebar {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    text-align: right;
 }
 
 .sidebar a {
-    display: block;         
-    padding: 15px;     
+    display: block;
+    padding: 15px;
     color: black;
-    font-weight: bold;  
-    text-decoration: none;        
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .sidebar a:hover {
@@ -172,12 +187,7 @@
     background-color: #ccc;
 }
 
-.container {
-    display: flex;
-    height: 100vh;
-}
-
-.students-conrainer {    
+.students-container {
     flex: 1;
     padding: 20px;
 }
@@ -187,19 +197,18 @@
 }
 
 table {
-    width: 1100px;   
+    width: 1100px;
     margin-top: 20px;
     margin-left: 50px;
     border: 2px solid black;
-    
 }
 
 th, td {
     border: 2px solid black;
-    padding: 10px;   
+    padding: 10px;
     text-align: left;
     height: 25px;
-    font-weight: 30px;
+    font-weight: 400;
     background-color: #dfdede;
 }
 
@@ -210,15 +219,14 @@ th {
 .status {
     display: flex;
     align-items: center;
-    justify-content: center;  
-    
+    justify-content: center;
 }
 
 .status-dot {
     width: 24px;
     height: 24px;
     border-radius: 100%;
-    display: inline-block;   
+    display: inline-block;
 }
 
 .green {
@@ -231,13 +239,13 @@ th {
 
 .option img {
     width: 20px;
-    height: 20px;     
-    cursor: pointer;    
+    height: 20px;
+    cursor: pointer;
     margin-left: 15px;
 }
 
-.add-student-btn{
-    background-color:azure;
+.add-student-btn {
+    background-color: azure;
     padding: 10px;
     font-size: 20px;
     cursor: pointer;
@@ -248,7 +256,7 @@ th {
     float: right;
 }
 
-.add-student-btn:hover{
+.add-student-btn:hover {
     background-color: #45a049;
 }
 
@@ -258,21 +266,21 @@ th {
     z-index: 1;
     left: 0;
     top: 0;
-    width: 500px;
-    height: 600px;    
-    justify-content: center;
-    align-items: center;    
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-.modal-content{
+.modal-content {
     padding: 20px;
-    position: absolute;
-    top: 20%;
-    left: 120%;
     width: 300px;
     border-radius: 5px;
     background-color: #ccc;
     border: 1px solid #ccc;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .modal-header {
@@ -283,30 +291,29 @@ th {
 }
 
 .close {
-    background-color:azure;
+    background-color: azure;
     padding: 10px;
     font-size: 20px;
     cursor: pointer;
     margin-bottom: 20px;
     border-radius: 5px;
-    float: left;
 }
 
 .modal-body {
     display: flex;
-    flex-direction: column;    
+    flex-direction: column;
 }
 
 .modal-body label {
     font-size: 12px;
     font-weight: bold;
-   
 }
 
-.modal-body input, .modal-body select {
+.modal-body input,
+.modal-body select {
     padding: 8px;
     margin-top: 5px;
-    border: 1 px solid #ccc;
+    border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
     width: 100%;
@@ -343,4 +350,438 @@ th {
     margin-top: 15px;
 }
 
+/* Адаптивність */
 
+/* Найменший розмір: до 576px (мобільні телефони) */
+@media (max-width: 576px) {
+    .header {
+        flex-direction: row;
+        padding: 10px;
+        justify-content: space-between;
+    }
+
+    .burger-menu {
+        display: block; 
+    }
+
+    .menu {
+        gap: 10px;
+    }
+
+    .profile-name {
+        display: none; 
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 200px;
+        transform: translateX(-100%); /* Ховаємо за межами екрану */
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .close-sidebar {
+        display: block; 
+    }
+
+    .sidebar a {
+        padding: 10px;
+        text-align: left;
+    }
+
+    .students-container {
+        padding: 10px;
+    }
+
+    .name {
+        padding-left: 10px;
+        font-size: 18px;
+    }
+
+    table {
+        width: 100%;
+        margin-left: 0;
+        font-size: 12px;
+    }
+
+    th, td {
+        padding: 5px;
+    }
+
+    .status-dot {
+        width: 16px;
+        height: 16px;
+    }
+
+    .option img {
+        width: 16px;
+        height: 16px;
+        margin-left: 5px;
+    }
+
+    .add-student-btn {
+        margin: 0 10px;
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    .pages {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    /* Модальні вікна */
+    .modal-content {
+        width: 90%;
+        padding: 10px;
+    }
+
+    .modal-body label {
+        font-size: 10px;
+    }
+
+    .modal-body input,
+    .modal-body select {
+        padding: 6px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+}
+
+/* Проміжний 1: 576px–768px (великі телефони, маленькі планшети) */
+@media (min-width: 577px) and (max-width: 768px) {
+    .header {
+        flex-direction: row;
+        padding: 10px 20px;
+        justify-content: space-between;
+    }
+
+    .burger-menu {
+        display: block; 
+    }
+
+    .menu {
+        gap: 10px;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 200px;
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .close-sidebar {
+        display: block;
+    }
+
+    .sidebar a {
+        padding: 12px;
+        text-align: left;
+    }
+
+    .students-container {
+        padding: 15px;
+    }
+
+    .name {
+        padding-left: 20px;
+        font-size: 20px;
+    }
+
+    table {
+        width: 100%;
+        margin-left: 0;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+
+    .status-dot {
+        width: 20px;
+        height: 20px;
+    }
+
+    .option img {
+        width: 18px;
+        height: 18px;
+        margin-left: 10px;
+    }
+
+    .add-student-btn {
+        margin: 0 15px;
+        font-size: 18px;
+        padding: 10px;
+    }
+
+    .pages {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    /* Модальні вікна */
+    .modal-content {
+        width: 80%;
+        padding: 15px;
+    }
+
+    .modal-body label {
+        font-size: 11px;
+    }
+
+    .modal-body input,
+    .modal-body select {
+        padding: 7px;
+    }
+
+    .btn {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+}
+
+/* Проміжний 2: 769px–992px (планшети) */
+@media (min-width: 769px) and (max-width: 992px) {
+    .header {
+        padding: 10px 25px;
+    }
+
+    .burger-menu {
+        display: none; 
+    }
+
+    .container {
+        flex-direction: row;
+    }
+
+    .sidebar {
+        width: 140px;
+        transform: none; 
+    }
+
+    .close-sidebar {
+        display: none;
+    }
+
+    .sidebar a {
+        padding: 12px;
+    }
+
+    .students-container {
+        padding: 15px;
+    }
+
+    .name {
+        padding-left: 30px;
+        font-size: 22px;
+    }
+
+    table {
+        width: 100%;
+        margin-left: 0;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+
+    .status-dot {
+        width: 20px;
+        height: 20px;
+    }
+
+    .option img {
+        width: 18px;
+        height: 18px;
+        margin-left: 10px;
+    }
+
+    .add-student-btn {
+        margin: 0 15px;
+        font-size: 18px;
+        padding: 10px;
+    }
+
+    .pages {
+        margin-left: 200px;
+    }
+
+    /* Модальні вікна */
+    .modal-content {
+        width: 70%;
+        padding: 15px;
+    }
+
+    .modal-body label {
+        font-size: 12px;
+    }
+
+    .modal-body input,
+    .modal-body select {
+        padding: 8px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+
+/* Проміжний 3: 993px–1200px (маленькі ноутбуки) */
+@media (min-width: 993px) and (max-width: 1200px) {
+    .header {
+        padding: 10px 30px;
+    }
+
+    .burger-menu {
+        display: none;
+    }
+
+    .sidebar {
+        width: 150px;
+        transform: none;
+    }
+
+    .close-sidebar {
+        display: none;
+    }
+
+    .sidebar a {
+        padding: 14px;
+    }
+
+    .students-container {
+        padding: 20px;
+    }
+
+    .name {
+        padding-left: 40px;
+    }
+
+    table {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    .status-dot {
+        width: 22px;
+        height: 22px;
+    }
+
+    .option img {
+        width: 20px;
+        height: 20px;
+        margin-left: 12px;
+    }
+
+    .add-student-btn {
+        margin: 0 20px;
+    }
+
+    .pages {
+        margin-left: 400px;
+    }
+
+    /* Модальні вікна */
+    .modal-content {
+        width: 50%;
+        padding: 20px;
+    }
+}
+
+/* Найбільший розмір: 1201px і більше (десктопи) */
+@media (min-width: 1201px) {
+    .header {
+        padding: 10px 30px;
+    }
+
+    .burger-menu {
+        display: none;
+    }
+
+    .sidebar {
+        width: 170px;
+        transform: none;
+    }
+
+    .close-sidebar {
+        display: none;
+    }
+
+    .sidebar a {
+        padding: 15px;
+    }
+
+    .students-container {
+        padding: 20px;
+    }
+
+    .name {
+        padding-left: 50px;
+    }
+
+    table {
+        width: 1100px;
+        margin-left: 50px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+
+    .status-dot {
+        width: 24px;
+        height: 24px;
+    }
+
+    .option img {
+        width: 20px;
+        height: 20px;
+        margin-left: 15px;
+    }
+
+    .add-student-btn {
+        margin: 0 20px;
+    }
+
+    .pages {
+        margin-left: 550px;
+    }
+
+    /* Модальні вікна */
+    .modal-content {
+        width: 300px;
+        padding: 20px;
+    }
+}

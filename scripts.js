@@ -42,7 +42,7 @@ window.onclick = function(event){
     if(event.target == modal) {
         modal.style.display = "none";
     }
-}
+};
 
 
 function changePage(step) {
@@ -63,8 +63,8 @@ function goToPage(pageNumber) {
 
 document.addEventListener("DOMContentLoaded", function() {
     const selectAllCheckbox = document.getElementById("selectAll");
-    const deleteButtons = document.querySelectorAll(".delete-btn"); // Використовуємо клас замість ID
-    const editButtons = document.querySelectorAll(".edit-btn");     // Використовуємо клас замість ID
+    const deleteButtons = document.querySelectorAll(".delete-btn"); 
+    const editButtons = document.querySelectorAll(".edit-btn");     
     const modal = document.getElementById("addStudent");
     const okButton = document.querySelector(".btn-ok");
     const createButton = document.querySelector(".btn-create");
@@ -308,6 +308,12 @@ document.addEventListener("DOMContentLoaded", function() {
         modal.style.display = "none";
     }
 
+    // Функція для перемикання сайдбару
+    window.toggleSidebar = function() {
+        const sidebar = document.querySelector(".sidebar");
+        sidebar.classList.toggle("active");
+    };
+
     window.onclick = function(event) {
         if (event.target == modal) {
             closeModal();
@@ -322,5 +328,6 @@ document.addEventListener("DOMContentLoaded", function() {
     attachCheckboxListeners();
     updateButtons();
     updateSelectAllCheckbox();
-});
+    }
+);
 
