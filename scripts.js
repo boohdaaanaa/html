@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Закриття модального вікна підтвердження
     window.closeConfirmModal = function() {
         confirmModal.style.display = "none";
-        delete window.currentRow; // Очищаємо посилання на рядок
+        delete window.currentRow; 
     };
 
     // Підтвердження видалення

@@ -76,72 +76,88 @@
     <!--Меню-->
     <nav class = "sidebar">
         <ul>
-            <li><a href = "index.html" class = "nav-link">Dashboard</a></li>
-            <li><a href = "students.html" class = "nav-link">Students</a></li>
-            <li><a href = "tasks.html" class = "nav-link">Tasks</a></li>
+            <a href = "index.html" class = "nav-link">Dashboard</a>
+            <a href = "students.html" class = "nav-link">Students</a>
+            <a href = "tasks.html" class = "nav-link">Tasks</a>
         </ul>
     </nav>
 
-    <!--Сторінка-->
-    <div class = "students-container">
+    <!--add-button-->
+    <div class="students-container">
     <h2 class = "name">Students</h2>
-    <!--Кнопка для нового студента-->
-    <button class = "add-student-btn" onclick="openModal()">+</button>
-       
-    <!--Таблиця-->
-        <table>
-            <tr>                
-                <th><input type = "checkbox" id = "selectAll"></th>
-                <th scope="col">Group</th>
-                <th scope="col">Name</th>
-                <th scope="col">Gender</th>
-                <th scope="col">Birthday</th>
-                <th scope="col">Status</th>
-                <th scope="col">Option</th>
-            </tr>
-            <tr>
-                <td><input type = "checkbox" class = "rowCheckbox"></td>
-                <td><b>PZ-21</b></td>
-                <td><b>Bohdana Fedorchuk</b></td>
-                <td>F</td>
-                <td><b>17.03.2006</b></td>
-                <td class="status"><span class = "status-dot green"></span></td>
-                <td class="option">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" >
-                </td>
-            </tr>
-            <tr>
-                <td><input type = "checkbox" class = "rowCheckbox"></td>
-                <td><b>PZ-22</b></td>
-                <td><b>Anna Moon</b></td>
-                <td>F</td>
-                <td><b>21.11.2006</b></td>
-                <td class="status"><span class = "status-dot gray"></span></td>
-                <td class="option">
-                    <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" alt="Edit Icon" class="edit-btn" onclick="openModal()" >
-                    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()" >
-                </td>
-            </tr> 
-            <tr>
-                <td><input type = "checkbox" class = "rowCheckbox"></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>      
-            <tr>
-                <td><input type = "checkbox" class = "rowCheckbox"></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>    
-        </table>
+        <div class="table-header">
+            <button class="add-student-btn" onclick="openModal()">+</button>
+        </div>
+           
+    <!-- Таблиця -->
+<table>
+    <tr>                
+        <th>
+            <input type="checkbox" id="selectAll">
+            <label for="selectAll" class="sr-only">Select All</label>
+        </th>
+        <th scope="col">Group</th>
+        <th scope="col">Name</th>
+        <th scope="col">Gender</th>
+        <th scope="col">Birthday</th>
+        <th scope="col">Status</th>
+        <th scope="col">Option</th>
+    </tr>
+    <tr>
+        <td>
+            <input type="checkbox" id="rowCheckbox1" class="rowCheckbox">
+            <label for="rowCheckbox1" class="sr-only">Select Bohdana Fedorchuk</label>
+        </td>
+        <td><b>PZ-21</b></td>
+        <td><b>Bohdana Fedorchuk</b></td>
+        <td>F</td>
+        <td><b>17.03.2006</b></td>
+        <td class="status"><span class="status-dot green"></span></td>
+        <td class="option">
+            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit Icon" class="edit-btn" onclick="openModal()">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="checkbox" id="rowCheckbox2" class="rowCheckbox">
+            <label for="rowCheckbox2" class="sr-only">Select Anna Moon</label>
+        </td>
+        <td><b>PZ-22</b></td>
+        <td><b>Anna Moon</b></td>
+        <td>F</td>
+        <td><b>21.11.2006</b></td>
+        <td class="status"><span class="status-dot gray"></span></td>
+        <td class="option">
+            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit Icon" class="edit-btn" onclick="openModal()">
+            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <input type="checkbox" id="rowCheckbox3" class="rowCheckbox">
+            <label for="rowCheckbox3" class="sr-only">Select row 3</label>
+        </td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+    </tr>      
+    <tr>
+        <td>
+            <input type="checkbox" id="rowCheckbox4" class="rowCheckbox">
+            <label for="rowCheckbox4" class="sr-only">Select row 4</label>
+        </td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+        <td aria-hidden="true"></td>
+    </tr>    
+</table>
 
         <!--Table pages-->
         <div class="pages">
