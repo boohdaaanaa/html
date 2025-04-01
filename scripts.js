@@ -211,94 +211,145 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         var table = document.querySelector("table tbody");
-        var newRow = table.insertRow(3);
-
-        var checkboxCell = newRow.insertCell(0);
-        var groupCell = newRow.insertCell(1);
-        var nameCell = newRow.insertCell(2);
-        var genderCell = newRow.insertCell(3);
-        var birthdayCell = newRow.insertCell(4);
-        var statusCell = newRow.insertCell(5);
-        var optionCell = newRow.insertCell(6);
-
-        statusCell.classList.add("status");
-        optionCell.classList.add("option");
-
-        checkboxCell.innerHTML = '<input type="checkbox" class="rowCheckbox">';
-        groupCell.innerHTML = `<b>${group}</b>`;
-        nameCell.innerHTML = `<b>${name} ${surname}</b>`;
-        genderCell.innerHTML = gender;
-        birthdayCell.innerHTML = `<b>${birthday}</b>`;
-        statusCell.innerHTML = '<span class="status-dot gray"></span>';
-        optionCell.innerHTML = `
-            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()" disabled>
-            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
-        `;
-
-        const newCheckbox = checkboxCell.querySelector(".rowCheckbox");
-        newCheckbox.addEventListener("change", handleCheckboxChange);
-
-        if (selectAllCheckbox.checked) {
-            newCheckbox.checked = true;
-            toggleRowButtons(newCheckbox);
-        }
-
-        closeModal();
-        updateButtons();
-        updateSelectAllCheckbox();
-        attachCheckboxListeners();
-    };
-
-    // Додавання нового студента через кнопку "OK"
-    window.okStudent = function(event) {
-        event.preventDefault();
-
-        var group = document.getElementById("group").value;
-        var name = document.getElementById("name").value;
-        var surname = document.getElementById("surname").value;
-        var gender = document.getElementById("gender").value;
-        var birthday = document.getElementById("birthday").value;
-
-        if (group && name && surname && gender && birthday) {
-            var table = document.querySelector("table tbody");
-            var newRow = table.insertRow(3);
-
-            var checkboxCell = newRow.insertCell(0);
-            var groupCell = newRow.insertCell(1);
-            var nameCell = newRow.insertCell(2);
-            var genderCell = newRow.insertCell(3);
-            var birthdayCell = newRow.insertCell(4);
-            var statusCell = newRow.insertCell(5);
-            var optionCell = newRow.insertCell(6);
-
+            var emptyRow = null;
+                
+            for (var i = 2; i < table.rows.length; i++) {
+                var cells = table.rows[i].cells;
+                if (cells.length > 1 && cells[1].innerHTML.trim() === "") {
+                    emptyRow = table.rows[i];
+                    break;
+                }
+            }
+                
+            if (!emptyRow) {
+                emptyRow = table.insertRow();
+                for (var j = 0; j < 7; j++) {
+                    emptyRow.insertCell(j);
+                }
+            }
+    
+            emptyRow.innerHTML = ""; 
+    
+            var checkboxCell = emptyRow.insertCell(0);
+            var groupCell = emptyRow.insertCell(1);
+            var nameCell = emptyRow.insertCell(2);
+            var genderCell = emptyRow.insertCell(3);
+            var birthdayCell = emptyRow.insertCell(4);
+            var statusCell = emptyRow.insertCell(5);
+            var optionCell = emptyRow.insertCell(6);
+    
             statusCell.classList.add("status");
             optionCell.classList.add("option");
-
-            checkboxCell.innerHTML = '<input type="checkbox" class="rowCheckbox">';
+    
+            var rowIndex = emptyRow.rowIndex; 
+            var checkboxId = `rowCheckbox${rowIndex}`;
+    
+            checkboxCell.innerHTML = `
+                <input type="checkbox" id="${checkboxId}" class="rowCheckbox">
+                <label for="${checkboxId}" class="sr-only">Select ${name} ${surname}</label>
+            `;
+    
             groupCell.innerHTML = `<b>${group}</b>`;
             nameCell.innerHTML = `<b>${name} ${surname}</b>`;
             genderCell.innerHTML = gender;
             birthdayCell.innerHTML = `<b>${birthday}</b>`;
             statusCell.innerHTML = '<span class="status-dot gray"></span>';
             optionCell.innerHTML = `
-                <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()" disabled>
-                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()" disabled>
+                <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()">
             `;
-
+    
             const newCheckbox = checkboxCell.querySelector(".rowCheckbox");
             newCheckbox.addEventListener("change", handleCheckboxChange);
-
+    
             if (selectAllCheckbox.checked) {
                 newCheckbox.checked = true;
                 toggleRowButtons(newCheckbox);
             }
+    
+            closeModal();
+            updateButtons();
+            updateSelectAllCheckbox();
+            attachCheckboxListeners();
+    };
 
+    // Додавання нового студента через кнопку "OK"
+    window.okStudent = function (event) {
+        event.preventDefault();
+    
+        var group = document.getElementById("group").value;
+        var name = document.getElementById("name").value;
+        var surname = document.getElementById("surname").value;
+        var gender = document.getElementById("gender").value;
+        var birthday = document.getElementById("birthday").value;
+    
+        if (group && name && surname && gender && birthday) {
+            var table = document.querySelector("table tbody");
+            var emptyRow = null;
+                
+            for (var i = 2; i < table.rows.length; i++) {
+                var cells = table.rows[i].cells;
+                if (cells.length > 1 && cells[1].innerHTML.trim() === "") {
+                    emptyRow = table.rows[i];
+                    break;
+                }
+            }    
+            
+            if (!emptyRow) {
+                emptyRow = table.insertRow();
+                for (var j = 0; j < 7; j++) {
+                    emptyRow.insertCell(j);
+                }
+            }
+    
+            emptyRow.innerHTML = ""; 
+    
+            var checkboxCell = emptyRow.insertCell(0);
+            var groupCell = emptyRow.insertCell(1);
+            var nameCell = emptyRow.insertCell(2);
+            var genderCell = emptyRow.insertCell(3);
+            var birthdayCell = emptyRow.insertCell(4);
+            var statusCell = emptyRow.insertCell(5);
+            var optionCell = emptyRow.insertCell(6);
+    
+            statusCell.classList.add("status");
+            optionCell.classList.add("option");
+    
+            var rowIndex = emptyRow.rowIndex;
+            var checkboxId = `rowCheckbox${rowIndex}`;
+    
+            checkboxCell.innerHTML = `
+                <input type="checkbox" id="${checkboxId}" class="rowCheckbox">
+                <label for="${checkboxId}" class="sr-only">Select ${name} ${surname}</label>
+            `;
+    
+            groupCell.innerHTML = `<b>${group}</b>`;
+            nameCell.innerHTML = `<b>${name} ${surname}</b>`;
+            genderCell.innerHTML = gender;
+            birthdayCell.innerHTML = `<b>${birthday}</b>`;
+            statusCell.innerHTML = '<span class="status-dot gray"></span>';
+            optionCell.innerHTML = `
+                <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" title="Edit" class="edit-btn" onclick="openModal()">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" title="Delete" class="delete-btn" onclick="deleteSelected()">
+            `;
+    
+            const newCheckbox = checkboxCell.querySelector(".rowCheckbox");
+            newCheckbox.addEventListener("change", handleCheckboxChange);
+    
+            if (selectAllCheckbox.checked) {
+                newCheckbox.checked = true;
+                toggleRowButtons(newCheckbox);
+            }
+    
             closeModal();
             updateButtons();
             updateSelectAllCheckbox();
             attachCheckboxListeners();
         }
     };
+    
+    
+    
 
     function openModal() {
         modal.style.display = "block";
