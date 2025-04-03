@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
 
     <title>Student</title>
 </head>
@@ -19,7 +20,7 @@
     <!--Логотип-->
     <div class = "logo-container"> 
         <a href="students.html">
-            <img src="https://img.freepik.com/premium-photo/drawing-dragon-flying-open-book_927978-151738.jpg" alt="Logo - Dragon and Book">
+            <img src="/logo.png" alt="Logo - Dragon and Book">
         </a>
     </div>
 
@@ -28,26 +29,26 @@
         <div class = "icon-container">
             <div class = "icon" id = "bellIcon">
                 <a href = "messages.html" onclick="clearNotificationIndicator()">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3119/3119338.png" alt="Notification Bell">
+                    <img src="/bell.png" alt="Notification Bell">
                 </a>
                 <div id = "notificationInd" class = "notification-ind"></div>
                 <div class = "dropdown">
                 <div class = "notification-item">
-                    <img src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png" alt="Admin Profile Icon">
+                    <img src="/profile-icon-png-898.png" alt="Admin Profile Icon">
                     <div class = "notification-text">
                         <span class = "name"> Admin </span>
                         <span class = "message"> Hello!</span>
                     </div>
                 </div>
                 <div class = "notification-item">
-                    <img src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png" alt="Anna S. Profile Icon">
+                    <img src="/profile-icon-png-898.png" alt="Anna S. Profile Icon">
                     <div class = "notification-text">
                         <span class = "name"> Anna S. </span>
                         <span class = "message"> Hello!</span>
                     </div>
                 </div>
                 <div class = "notification-item">
-                    <img src="https://www.freeiconspng.com/thumbs/profile-icon-png/profile-icon-9.png" alt="Maria T. Profile Icon">
+                    <img src="/profile-icon-png-898.png" alt="Maria T. Profile Icon">
                     <div class = "notification-text">
                         <span class = "name"> Maria T. </span>                
                         <span class = "message"> Hello!</span>
@@ -60,7 +61,7 @@
         <!--Профіль-->
         <div class = "profile-container">
         <div class = "profile">
-            <img src = "https://cdn-icons-png.flaticon.com/512/6522/6522516.png" alt="User Profile Icon">
+            <img src = "/profile.png" alt="User Profile Icon">
             <span class = "profile-name"> Bohdana Fedorchuk</span>
 
             <div class = "dropdown">
@@ -114,8 +115,8 @@
         <td><b>2006-03-17</b></td>
         <td class="status"><span class="status-dot green"></span></td>
         <td class="option">
-            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit Icon" class="edit-btn" onclick="openModal()">
-            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
+            <img src="/edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
+            <img src="/delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
         </td>
     </tr>
     <tr>
@@ -129,8 +130,8 @@
         <td><b>2006-11-21</b></td>
         <td class="status"><span class="status-dot gray"></span></td>
         <td class="option">
-            <img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" alt="Edit Icon" class="edit-btn" onclick="openModal()">
-            <img src="https://cdn-icons-png.flaticon.com/512/1828/1828778.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
+            <img src="/edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
+            <img src="/delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
         </td>
     </tr> 
     <tr>
@@ -172,39 +173,46 @@
     </div>
 
     <!--form for add student-->
-    <div id = "addStudent" class = "modal">
-        <div class = "modal-content">
-            <div class = "modal-header">
-                <h3>Add student</h3>
-                <span class = "close" onclick = "closeModal()">&times;</span>
+    <div id="addStudent" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add student</h3>
+                <span class="close" onclick="closeModal()">×</span>
             </div>
-            <form class = "modal-body">
-                <label for = "group">Group</label>
-                <select id = "group" name = "group">
-                    <option value = "" disabled selected>Select Group</option>
-                    <option value = "PZ-21">PZ-21</option>
-                    <option value = "PZ-22">PZ-22</option>
+            <form class="modal-body" id="studentForm" novalidate>
+                <input type="hidden" id="studentId" name="studentId">
+    
+                <label for="group">Group</label>
+                <select id="group" name="group" required>
+                    <option value="" disabled selected>Select Group</option>
+                    <option value="PZ-21">PZ-21</option>
+                    <option value="PZ-22">PZ-22</option>
                 </select>
-
-                <label for = "name">Firs name</label>
-                <input type = "text" id = "name" name = "name" placeholder="">
-
-                <label for = "surname">Last name</label>
-                <input type = "text" id = "surname" name = "surname" placeholder="">
-
-                <label for = "gender">Gender</label>
-                <select id = "gender" name = "gender">
+                <span class="error-message" id="group-error"></span>
+    
+                <label for="name">First name</label>
+                <input type="text" id="name" name="name" required>
+                <span class="error-message" id="name-error"></span>
+    
+                <label for="surname">Last name</label>
+                <input type="text" id="surname" name="surname" required>
+                <span class="error-message" id="surname-error"></span>
+    
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender" required>
                     <option value="" disabled selected>Select Gender</option>
-                    <option value = "M">Male</option>
+                    <option value="M">Male</option>
                     <option value="F">Female</option>
                 </select>
-
-                <label for = "birthday">Birthday</label>
-                <input type = "date" id = "birthday" name = "birthday"> 
-
-                <div class = "modal-buttons">
-                    <button type = "button" class = "btn btn-ok" onclick="closeModal()">OK</button>
-                    <button type = "submit" class = "btn btn-create">Create</button>
+                <span class="error-message" id="gender-error"></span>
+    
+                <label for="birthday">Birthday</label>
+                <input type="date" id="birthday" name="birthday">
+                <span class="error-message" id="birthday-error"></span>
+    
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-ok" onclick="handleOk()">OK</button>
+                    <button id="submitStudent" type="submit" class="btn btn-create">Create</button>
                 </div>
             </form>
         </div>

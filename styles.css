@@ -269,6 +269,45 @@ th {
     margin-left: 15px;
 }
 
+
+input.error, select.error {
+    border: 2px solid red !important;
+    background-color: rgba(255, 0, 0, 0.1);
+    outline: none !important;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+    min-height: 15px;
+}
+
+input, select {
+    border: 1px solid #ccc;
+    padding: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #666;
+}
+
+/* Прибираємо стандартні підказки браузера */
+input:invalid, select:invalid {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+
+
+
+
 .students-container {
     flex: 1;
     padding: 20px;
