@@ -272,8 +272,8 @@ function submitStudent(event) {
             <td><b>${birthday}</b></td>
             <td class="status"><span class="status-dot gray"></span></td>
             <td class="option">
-                <img src="/edit.png" title="Edit" class="edit-btn" onclick="editRow(this)">
-                <img src="delete.png" title="Delete" class="delete-btn" onclick="deleteRow(this)">
+                <img src="edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
+                <img src="delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
             </td>
         `;
 
@@ -496,3 +496,47 @@ document.addEventListener("DOMContentLoaded", function() {
 );
 
 
+// Check if user is logged in
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('index.php?action=check_login', { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+            const isLoggedIn = data.isLoggedIn;
+            const userName = data.userName || '';
+
+            // Elements to show/hide based on login status
+            const loginBtn = document.querySelector('.login-btn');
+            const bellIcon = document.querySelector('#bellIcon');
+            const profileContainer = document.querySelector('.profile-container');
+            const addStudentBtn = document.querySelector('.add-student-btn');
+            const editButtons = document.querySelectorAll('.edit-btn');
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            const taskLink = document.querySelector('a[href="tasks.html"]');
+            const messageLink = document.querySelector('a[href="messages.html"]');
+            const profileName = document.querySelector('.profile-name');
+
+            if (isLoggedIn) {
+                // Show elements for logged-in users
+                if (loginBtn) loginBtn.style.display = 'none';
+                if (bellIcon) bellIcon.style.display = 'block';
+                if (profileContainer) profileContainer.style.display = 'block';
+                if (addStudentBtn) addStudentBtn.style.display = 'block';
+                if (editButtons) editButtons.forEach(btn => btn.style.display = 'block');
+                if (deleteButtons) deleteButtons.forEach(btn => btn.style.display = 'block');
+                if (taskLink) taskLink.style.pointerEvents = 'auto';
+                if (messageLink) messageLink.style.pointerEvents = 'auto';
+                if (profileName) profileName.textContent = userName;
+            } else {
+                // Hide elements for non-logged-in users
+                if (loginBtn) loginBtn.style.display = 'block';
+                if (bellIcon) bellIcon.style.display = 'none';
+                if (profileContainer) profileContainer.style.display = 'none';
+                if (addStudentBtn) addStudentBtn.style.display = 'none';
+                if (editButtons) editButtons.forEach(btn => btn.style.display = 'none');
+                if (deleteButtons) deleteButtons.forEach(btn => btn.style.display = 'none');
+                if (taskLink) taskLink.style.pointerEvents = 'none';
+                if (messageLink) messageLink.style.pointerEvents = 'none';
+            }
+        })
+        .catch(error => console.error('Error checking login status:', error));
+});
