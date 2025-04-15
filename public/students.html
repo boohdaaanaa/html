@@ -51,10 +51,10 @@
             <input type="checkbox" id="rowCheckbox1" class="rowCheckbox">
             <label for="rowCheckbox1" class="sr-only">Select Bohdana Fedorchuk</label>
         </td>
-        <td><b>PZ-21</b></td>
-        <td><b>Bohdana Fedorchuk</b></td>
+        <td>PZ-21</td>
+        <td>Bohdana Fedorchuk</td>
         <td>F</td>
-        <td><b>2006-03-17</b></td>
+        <td>2006-03-17</td>
         <td class="status"><span class="status-dot green"></span></td>
         <td class="option">
             <img src="edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
@@ -66,10 +66,10 @@
             <input type="checkbox" id="rowCheckbox2" class="rowCheckbox">
             <label for="rowCheckbox2" class="sr-only">Select Anna Moon</label>
         </td>
-        <td><b>PZ-22</b></td>
-        <td><b>Anna Moon</b></td>
+        <td>PZ-22</td>
+        <td>Anna Moon</td>
         <td>F</td>
-        <td><b>2006-11-21</b></td>
+        <td>2006-11-21</td>
         <td class="status"><span class="status-dot gray"></span></td>
         <td class="option">
             <img src="edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
@@ -99,7 +99,10 @@
         <td aria-hidden="true"></td>
         <td aria-hidden="true"></td>
         <td aria-hidden="true"></td>
-    </tr>    
+    </tr>
+    <tbody>
+        <!-- Тут будуть додаватись студенти -->
+    </tbody>
 </table>
 
         <!--Table pages-->
@@ -197,13 +200,61 @@
   </div>
 
   <script>
-    fetch('header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header-container').innerHTML = data;
-        })
-        .catch(error => console.error('Error header.html:', error));
+   fetch('header.html')
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('header-container').innerHTML = data;
+
+        // ✅ Тепер, коли header вставлено — додаємо обробник
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async function () {
+                try {
+                    const response = await fetch("logout.php");
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.location.href = "index.php";
+                    }
+                } catch (error) {
+                    console.error("Logout failed:", error);
+                }
+            });
+        }
+    })
+    .catch(error => console.error('Error header.html:', error));
 </script>
 
+<script>
+    // Асинхронно підвантажуємо студентів з серверу
+    fetch('get_students.php')
+        .then(response => response.json())
+        .then(students => {
+            const tbody = document.querySelector('#studentsTable tbody');
+            students.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td>${student.group_name}</td>
+                    <td>${student.name}</td>
+                    <td>${student.gender}</td>
+                    <td>${student.birthday}</td>
+                    <td class="status"><span class="status-dot ${student.status == 'active' ? 'green' : 'gray'}"></span></td>
+                    <td>
+                        <img src="edit.png" alt="Edit" class="edit-btn">
+                        <img src="delete.png" alt="Delete" class="delete-btn">
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error loading students:', error));
+</script>
+
+
+
 <script src="scripts.js"></script>
+
+
+
 </body>

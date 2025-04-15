@@ -53,9 +53,30 @@
 
                 <div class="dropdown">
                     <div class="profile-item"> Profile </div>
-                    <div class="profile-item" id="logoutBtn"> Log out </div>
+                    <div class="profile-item" id="logoutBtn">Log out</div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById("logoutBtn").addEventListener("click", async function () {
+            try {
+                const response = await fetch("logout.php");
+                const data = await response.json();
+        
+                if (data.success) {
+                    // Показати форму логіну
+                    document.getElementById("loginModal").style.display = "block";
+                }
+            } catch (error) {
+                console.error("Logout failed:", error);
+            }
+        });
+        </script>
+        
+
+
 </header>
+
+

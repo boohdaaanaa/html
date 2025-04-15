@@ -49,12 +49,29 @@
 
       <script>
         fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-container').innerHTML = data;
-            })
-            .catch(error => console.error('Error header.html:', error));
-    </script>
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById('header-container').innerHTML = data;
+     
+             // ✅ Тепер, коли header вставлено — додаємо обробник
+             const logoutBtn = document.getElementById("logoutBtn");
+             if (logoutBtn) {
+                 logoutBtn.addEventListener("click", async function () {
+                     try {
+                         const response = await fetch("logout.php");
+                         const data = await response.json();
+     
+                         if (data.success) {
+                          window.location.href = "index.php";
+                        }
+                     } catch (error) {
+                         console.error("Logout failed:", error);
+                     }
+                 });
+             }
+         })
+         .catch(error => console.error('Error header.html:', error)); 
+     </script>
 
 
 

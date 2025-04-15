@@ -158,7 +158,7 @@
     filter: contrast(150%) brightness(1.2);
     border: 2px solid #333;
     border-radius: 50%;
-    width: 32px; /* Припускаю розмір, налаштуйте за потребою */
+    width: 32px; 
     height: 32px;
 }
 
@@ -221,52 +221,72 @@
     padding-left: 50px;
 }
 
+/* Existing table styles */
 table {
     width: 1500px;
     margin-top: 0px;
     margin-left: 0px;
-    border: 2px solid black;
+    border: 3px solid black;
+    table-layout: fixed;
+    border-collapse: collapse;
 }
 
 th, td {
-    border: 2px solid black;
-    padding: 10px;
+    border: 3px solid black;
+    padding: 15px;
     text-align: left;
-    height: 25px;
-    font-weight: 400;
+    height: 40px;
+    vertical-align: middle;
+    font-weight: normal; /* Explicitly set to normal (equivalent to 400, but clearer) */
     background-color: #dfdede;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 th {
     background: #f4f4f4;
+    font-weight: normal; /* Remove bold from headers; previously 600 */
 }
 
-.status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/* Define minimum widths for each column */
+th:nth-child(1), td:nth-child(1) { min-width: 50px; }  /* Checkbox */
+th:nth-child(2), td:nth-child(2) { min-width: 120px; } /* Group */
+th:nth-child(3), td:nth-child(3) { min-width: 220px; } /* Name */
+th:nth-child(4), td:nth-child(4) { min-width: 100px; } /* Gender */
+th:nth-child(5), td:nth-child(5) { min-width: 140px; } /* Birthday */
+th:nth-child(6), td:nth-child(6) { min-width: 100px; } /* Status */
+th:nth-child(7), td:nth-child(7) { min-width: 160px; } /* Option */
 
+/* Ensure status dots and option icons align properly */
 .status-dot {
-    width: 24px;
-    height: 24px;
-    border-radius: 100%;
     display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
 }
 
-.green {
-    background: green;
+.status-dot.green {
+    background-color: green;
 }
 
-.gray {
-    background: gray;
+.status-dot.gray {
+    background-color: gray;
+}
+
+.option {
+    white-space: nowrap;
 }
 
 .option img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
     cursor: pointer;
-    margin-left: 15px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 

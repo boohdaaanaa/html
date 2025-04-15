@@ -571,34 +571,5 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
 });
 
 
-// logout
-
-document.addEventListener("DOMContentLoaded", function () {
-    fetch('header.html')
-        .then(res => res.text())
-        .then(html => {
-            document.getElementById('header-container').innerHTML = html;
-            console.log("Header loaded");
-
-            const logoutBtn = document.getElementById("logoutBtn");
-            if (logoutBtn) {
-                console.log("Logout button found");
-                logoutBtn.addEventListener("click", function () {
-                    console.log("Logout clicked");
-                    fetch('index.php?page=logout')
-                        .then(() => {
-                            document.querySelector(".container").style.display = "none";
-                            logoutBtn.style.display = "none";
-                            const loginModal = document.getElementById("loginModal");
-                            if (loginModal) loginModal.style.display = "block";
-                        })
-                        .catch(error => console.error('Logout failed:', error));
-                });
-            } else {
-                console.warn("Logout button not found after inserting header");
-            }
-        });
-});
-
 
 
