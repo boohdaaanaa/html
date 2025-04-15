@@ -1,5 +1,4 @@
 <?php
-// Start session at the beginning
 session_start();
 
 require_once '../config/database.php';
@@ -10,7 +9,6 @@ require_once '../controllers/StudentController.php';
 $database = new Database();
 $db = $database->getConnection();
 
-// Check if database connection was successful
 if ($db === null) {
     die("Failed to connect to the database. Please check your configuration.");
 }

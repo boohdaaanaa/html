@@ -226,46 +226,6 @@ table {
     margin-top: 0px;
     margin-left: 0px;
     border: 2px solid black;
-    table-layout: fixed; /* Ensure consistent column widths */
-}
-
-th, td {
-    border: 2px solid black;
-    padding: 10px;
-    text-align: left;
-    height: 25px;
-    font-weight: 400;
-    background-color: #dfdede;
-    box-sizing: border-box; /* Ensure padding is included in width */
-}
-
-/* Define specific widths for each column */
-th:nth-child(1), td:nth-child(1) { /* Checkbox */
-    width: 5%;
-}
-
-th:nth-child(2), td:nth-child(2) { /* Group */
-    width: 15%;
-}
-
-th:nth-child(3), td:nth-child(3) { /* Name */
-    width: 25%;
-}
-
-th:nth-child(4), td:nth-child(4) { /* Gender */
-    width: 10%;
-}
-
-th:nth-child(5), td:nth-child(5) { /* Birthday */
-    width: 15%;
-}
-
-th:nth-child(6), td:nth-child(6) { /* Status */
-    width: 10%;
-}
-
-th:nth-child(7), td:nth-child(7) { /* Option */
-    width: 20%;
 }
 
 th, td {
@@ -285,7 +245,6 @@ th {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 25px;
 }
 
 .status-dot {
@@ -303,18 +262,11 @@ th {
     background: gray;
 }
 
-.option {
-    display: flex;
-    align-items:  center;
-    justify-content: center;
-    height: 25px;
-}
-
 .option img {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    margin-left: 0 5px;
+    margin-left: 15px;
 }
 
 

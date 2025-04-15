@@ -540,3 +540,65 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => console.error('Error checking login status:', error));
 });
+
+
+document.querySelector('.login-btn').addEventListener('click', () => {
+    document.getElementById('loginModal').style.display = 'block';
+});
+
+function closeLoginModal() {
+    document.getElementById('loginModal').style.display = 'none';
+}
+
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    fetch('index.php?page=login', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else {
+            document.getElementById('loginError').style.display = 'block';
+        }
+    })
+    .catch(() => {
+        document.getElementById('loginError').style.display = 'block';
+    });
+});
+
+
+// logout
+
+document.addEventListener("DOMContentLoaded", function () {
+    fetch('header.html')
+        .then(res => res.text())
+        .then(html => {
+            document.getElementById('header-container').innerHTML = html;
+            console.log("Header loaded");
+
+            const logoutBtn = document.getElementById("logoutBtn");
+            if (logoutBtn) {
+                console.log("Logout button found");
+                logoutBtn.addEventListener("click", function () {
+                    console.log("Logout clicked");
+                    fetch('index.php?page=logout')
+                        .then(() => {
+                            document.querySelector(".container").style.display = "none";
+                            logoutBtn.style.display = "none";
+                            const loginModal = document.getElementById("loginModal");
+                            if (loginModal) loginModal.style.display = "block";
+                        })
+                        .catch(error => console.error('Logout failed:', error));
+                });
+            } else {
+                console.warn("Logout button not found after inserting header");
+            }
+        });
+});
+
+
+

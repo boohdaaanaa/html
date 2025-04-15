@@ -8,87 +8,20 @@
     <link rel="manifest" href="manifest.json">
 
     <title>Student</title>
-    <style>
-        /* Initially hide elements for non-logged-in users */
-        #bellIcon, .profile-container, .add-student-btn, .edit-btn, .delete-btn {
-            display: none;
-        }
-        a[href="tasks.html"], a[href="messages.html"] {
-            pointer-events: none;
-        }
-    </style>
+   
 </head>
 
 <body>
-<header class = "header">
-<!-- Бургер-меню -->
-<div class="burger-menu" onclick="toggleSidebar()">
-    <span class="burger-icon">☰</span>
-</div>
 
-    <!--Логотип-->
-    <div class = "logo-container"> 
-        <a href="students.html">
-            <img src="../public/logo.png" alt="Logo - Dragon and Book">
-        </a>
-    </div>
-
-    <div class = "menu">
-        <!--Повідомлення-->
-        <div class = "icon-container">
-            <div class = "icon" id = "bellIcon">
-                <a href = "messages.html" onclick="clearNotificationIndicator()">
-                    <img src="../public/bell.png" alt="Notification Bell">
-                </a>
-                <div id = "notificationInd" class = "notification-ind"></div>
-                <div class = "dropdown">
-                <div class = "notification-item">
-                    <img src="../public/profile-icon-png-898.png" alt="Admin Profile Icon">
-                    <div class = "notification-text">
-                        <span class = "name"> Admin </span>
-                        <span class = "message"> Hello!</span>
-                    </div>
-                </div>
-                <div class = "notification-item">
-                    <img src="../public/profile-icon-png-898.png" alt="Anna S. Profile Icon">
-                    <div class = "notification-text">
-                        <span class = "name"> Anna S. </span>
-                        <span class = "message"> Hello!</span>
-                    </div>
-                </div>
-                <div class = "notification-item">
-                    <img src="../public/profile-icon-png-898.png" alt="Maria T. Profile Icon">
-                    <div class = "notification-text">
-                        <span class = "name"> Maria T. </span>                
-                        <span class = "message"> Hello!</span>
-                    </div>
-                </div>          
-            </div>
-        </div>
-        </div>
-
-        <!--Профіль-->
-        <div class = "profile-container">
-        <div class = "profile">
-            <img src = "../public/profile.png" alt="User Profile Icon">
-            <span class = "profile-name"> Bohdana Fedorchuk</span>
-
-            <div class = "dropdown">
-                <div class = "profile-item"> Profile </div>
-                <div class = "profile-item"> Log out </div>
-            </div>
-        </div>
-        </div>
-    </div>
-</header>
+    <div id="header-container"></div>      
  
     <div class = "container">
     <!--Меню-->
     <nav class = "sidebar">
         <ul>
-            <a href = "index.html" class = "nav-link">Dashboard</a>
-            <a href = "students.html" class = "nav-link">Students</a>
-            <a href = "tasks.html" class = "nav-link">Tasks</a>
+            <a href = "../public/index.html" class = "nav-link">Dashboard</a>
+            <a href = "../public/students.html" class = "nav-link">Students</a>
+            <a href = "../public/tasks.html" class = "nav-link">Tasks</a>
         </ul>
     </nav>
 
@@ -124,8 +57,8 @@
         <td><b>2006-03-17</b></td>
         <td class="status"><span class="status-dot green"></span></td>
         <td class="option">
-            <img src="../public/edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
-            <img src="../public/delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
+            <img src="edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
+            <img src="delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
         </td>
     </tr>
     <tr>
@@ -139,8 +72,8 @@
         <td><b>2006-11-21</b></td>
         <td class="status"><span class="status-dot gray"></span></td>
         <td class="option">
-            <img src="../public/edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
-            <img src="../public/delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
+            <img src="edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
+            <img src="delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
         </td>
     </tr> 
     <tr>
@@ -246,5 +179,31 @@
         </div>
     </div>
   
+
+
+    <!-- Login Modal -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">      
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label for="username">Login:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" placeholder="YYYY-MM-DD" required>
+        <button type="submit">Log in</button>
+      </form>
+      <div id="loginError" style="color:red; display:none;">Incorrect data.</div>
+    </div>
+  </div>
+
+  <script>
+    fetch('header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error header.html:', error));
+</script>
+
 <script src="scripts.js"></script>
 </body>
