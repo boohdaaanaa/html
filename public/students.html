@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
+    <!-- <link rel="manifest" href="manifest.json"> -->
 
     <title>Student</title>
    
@@ -33,77 +33,23 @@
         </div>
            
     <!-- Таблиця -->
-<table>
-    <tr>                
-        <th>
-            <input type="checkbox" id="selectAll">
-            <label for="selectAll" class="sr-only">Select All</label>
-        </th>
-        <th scope="col">Group</th>
-        <th scope="col">Name</th>
-        <th scope="col">Gender</th>
-        <th scope="col">Birthday</th>
-        <th scope="col">Status</th>
-        <th scope="col">Option</th>
-    </tr>
-    <tr>
-        <td>
-            <input type="checkbox" id="rowCheckbox1" class="rowCheckbox">
-            <label for="rowCheckbox1" class="sr-only">Select Bohdana Fedorchuk</label>
-        </td>
-        <td>PZ-21</td>
-        <td>Bohdana Fedorchuk</td>
-        <td>F</td>
-        <td>2006-03-17</td>
-        <td class="status"><span class="status-dot green"></span></td>
-        <td class="option">
-            <img src="edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
-            <img src="delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <input type="checkbox" id="rowCheckbox2" class="rowCheckbox">
-            <label for="rowCheckbox2" class="sr-only">Select Anna Moon</label>
-        </td>
-        <td>PZ-22</td>
-        <td>Anna Moon</td>
-        <td>F</td>
-        <td>2006-11-21</td>
-        <td class="status"><span class="status-dot gray"></span></td>
-        <td class="option">
-            <img src="edit.png" alt="Edit Icon" class="edit-btn" onclick="editRow(this)">
-            <img src="delete.png" alt="Delete Icon" class="delete-btn" onclick="deleteSelected()">
-        </td>
-    </tr> 
-    <tr>
-        <td>
-            <input type="checkbox" id="rowCheckbox3" class="rowCheckbox">
-            <label for="rowCheckbox3" class="sr-only">Select row 3</label>
-        </td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-    </tr>      
-    <tr>
-        <td>
-            <input type="checkbox" id="rowCheckbox4" class="rowCheckbox">
-            <label for="rowCheckbox4" class="sr-only">Select row 4</label>
-        </td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-        <td aria-hidden="true"></td>
-    </tr>
-    <tbody>
-        <!-- Тут будуть додаватись студенти -->
-    </tbody>
-</table>
+    <table id="studentsTable">
+        <thead>
+          <tr>                
+              <th><input type="checkbox" id="selectAll"></th>
+              <th scope="col">Group</th>
+              <th scope="col">Name</th>
+              <th scope="col">Gender</th>
+              <th scope="col">Birthday</th>
+              <th scope="col">Status</th>
+              <th scope="col">Option</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Студенти будуть тут -->
+        </tbody>
+      </table>
+      
 
         <!--Table pages-->
         <div class="pages">
@@ -115,7 +61,6 @@
             <button onclick="changePage(1)">&gt;</button>
         </div>
 
-    </div>
 
     <!--form for add student-->
     <div id="addStudent" class="modal">
@@ -205,7 +150,6 @@
     .then(data => {
         document.getElementById('header-container').innerHTML = data;
 
-        // ✅ Тепер, коли header вставлено — додаємо обробник
         const logoutBtn = document.getElementById("logoutBtn");
         if (logoutBtn) {
             logoutBtn.addEventListener("click", async function () {
@@ -226,30 +170,36 @@
 </script>
 
 <script>
-    // Асинхронно підвантажуємо студентів з серверу
     fetch('get_students.php')
-        .then(response => response.json())
-        .then(students => {
-            const tbody = document.querySelector('#studentsTable tbody');
-            students.forEach(student => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><input type="checkbox"></td>
-                    <td>${student.group_name}</td>
-                    <td>${student.name}</td>
-                    <td>${student.gender}</td>
-                    <td>${student.birthday}</td>
-                    <td class="status"><span class="status-dot ${student.status == 'active' ? 'green' : 'gray'}"></span></td>
-                    <td>
-                        <img src="edit.png" alt="Edit" class="edit-btn">
-                        <img src="delete.png" alt="Delete" class="delete-btn">
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        })
-        .catch(error => console.error('Error loading students:', error));
+    .then(response => response.json())
+    .then(students => {
+        const tbody = document.querySelector('#studentsTable tbody');
+        tbody.innerHTML = "";
+        students.forEach((student, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox" id="rowCheckbox${index + 1}" class="rowCheckbox"></td>
+                <td>${student.group_name}</td>
+                <td>${student.name}</td>
+                <td>${student.gender}</td>
+                <td>${student.birthday}</td>
+                <td class="status"><span class="status-dot ${student.status === 'active' ? 'green' : 'gray'}"></span></td>
+                <td class="option">
+                    <img src="edit.png" alt="Edit" class="edit-btn">
+                    <img src="delete.png" alt="Delete" class="delete-btn">
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // Оновлюємо стан після завантаження
+        updateButtons();
+        updateSelectAllCheckbox();
+        attachCheckboxListeners();
+    })
+    .catch(error => console.error('Помилка при завантаженні студентів:', error));
 </script>
+
 
 
 

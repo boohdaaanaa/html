@@ -5,20 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
+   <!-- <link rel="manifest" href="manifest.json"> -->
 
     <title>Student</title>
 </head>
 
 <body>
 
-    <div id="header-container"></div>
-
+    <div id="header-container"></div> 
     
-    
-
- 
-    <div class = "container">
+     <div class = "container">
     <!--Меню-->
     <nav class = "sidebar">
         <ul>
@@ -51,9 +47,8 @@
         fetch('header.html')
          .then(response => response.text())
          .then(data => {
-             document.getElementById('header-container').innerHTML = data;
-     
-             // ✅ Тепер, коли header вставлено — додаємо обробник
+             document.getElementById('header-container').innerHTML = data;     
+            
              const logoutBtn = document.getElementById("logoutBtn");
              if (logoutBtn) {
                  logoutBtn.addEventListener("click", async function () {

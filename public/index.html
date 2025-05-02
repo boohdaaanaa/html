@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <!--
 <meta name="theme-color" content="#000000">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    
+    <link rel="manifest" href="manifest.json"> -->
+    
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
 
     <title>Student</title>
 </head>
@@ -57,7 +59,6 @@
      .then(data => {
          document.getElementById('header-container').innerHTML = data;
  
-         // ✅ Тепер, коли header вставлено — додаємо обробник
          const logoutBtn = document.getElementById("logoutBtn");
          if (logoutBtn) {
              logoutBtn.addEventListener("click", async function () {
