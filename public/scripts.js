@@ -4,6 +4,11 @@ function getRowCheckboxes() {
     return document.querySelectorAll(".rowCheckbox");
 }
 
+//Глобальні змінні для пагінації
+let studentsData = [];
+let currentPage = 1;
+const rowsPerPage = 5;
+
 function toggleRowButtons(checkbox) {
     const row = checkbox.closest("tr");
     const editBtn = row.querySelector(".edit-btn");
@@ -89,67 +94,104 @@ function loadStudents() {
     fetch('get_students.php')
         .then(response => response.json())
         .then(students => {
-            const tbody = document.querySelector('#studentsTable tbody');
-            tbody.innerHTML = "";
-
-            students.forEach(student => {
-                const row = document.createElement('tr');
-                row.setAttribute("data-id", student.id);
-                row.innerHTML = `
-                    <td><input type="checkbox" class="rowCheckbox"></td>
-                    <td>${student.group_name}</td>
-                    <td>${student.name} ${student.surname}</td>
-                    <td>${student.gender}</td>
-                    <td>${student.birthday}</td>
-                    <td class="status"><span class="status-dot ${student.status === 'active' ? 'green' : 'gray'}"></span></td>
-                    <td class="option">
-                        <img src="edit.png" alt="Edit" class="edit-btn" disabled>
-                        <img src="delete.png" alt="Delete" class="delete-btn" disabled>
-                    </td>
-                `;
-                tbody.appendChild(row);
-
-                const editBtn = row.querySelector('.edit-btn');
-                const deleteBtn = row.querySelector('.delete-btn');
-                const checkbox = row.querySelector('.rowCheckbox');
-
-                if (editBtn) {
-                    editBtn.addEventListener('click', () => editRow(editBtn));
-                }
-
-                if (deleteBtn) {
-                    deleteBtn.addEventListener('click', () => deleteRow(deleteBtn));
-                }
-
-                if (checkbox) {
-                    checkbox.addEventListener('change', () => {
-                        toggleRowButtons(checkbox);
-                        updateButtons();
-                        updateSelectAllCheckbox();
-                    });
-                }
-            });
-
-            const selectAll = document.getElementById("selectAll");
-            if (selectAll && !selectAll.dataset.bound) {
-                selectAll.addEventListener("change", () => {
-                    const allCheckboxes = getRowCheckboxes();
-                    allCheckboxes.forEach(checkbox => {
-                        checkbox.checked = selectAll.checked;
-                        toggleRowButtons(checkbox);
-                    });
-                    updateButtons();
-                });
-                selectAll.dataset.bound = "true";
-            }
-
-            updateButtons();
-            updateSelectAllCheckbox();
+            studentsData = students;
+            renderPage(currentPage);
+            renderPaginationButtons();
         })
         .catch(error => {
             console.error("Помилка при завантаженні студентів:", error);
         });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const mainCheckbox = document.getElementById("selectAll");
+    if (mainCheckbox) {
+        mainCheckbox.addEventListener("change", () => {
+            // Знаходимо всі чекбокси, що відображаються на поточній сторінці
+            const rowCheckboxes = document.querySelectorAll(".rowCheckbox");
+            rowCheckboxes.forEach(cb => {
+                cb.checked = mainCheckbox.checked;
+                toggleRowButtons(cb);
+            });
+            updateSelectAllCheckbox();
+        });
+    }
+});
+
+
+function renderPage(pageNumber) {
+    const tbody = document.querySelector('#studentsTable tbody');
+    tbody.innerHTML = "";
+
+    const start = (pageNumber - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const pageStudents = studentsData.slice(start, end);
+
+    pageStudents.forEach(student => {
+        const row = document.createElement('tr');
+        row.setAttribute("data-id", student.id);
+        row.innerHTML = `
+            <td><input type="checkbox" class="rowCheckbox"></td>
+            <td>${student.group_name}</td>
+            <td>${student.name} ${student.surname}</td>
+            <td>${student.gender}</td>
+            <td>${student.birthday}</td>
+            <td class="status">
+              <span class="status-dot ${student.status === 'active' ? 'green' : 'gray'}"></span>
+            </td>
+            <td class="option">
+                <img src="edit.png" alt="Edit" class="edit-btn" disabled>
+                <img src="delete.png" alt="Delete" class="delete-btn" disabled>
+            </td>
+        `;
+        tbody.appendChild(row);
+
+        const editBtn = row.querySelector('.edit-btn');
+        const deleteBtn = row.querySelector('.delete-btn');
+        const checkbox = row.querySelector('.rowCheckbox');
+
+        if (editBtn) {
+            editBtn.addEventListener('click', () => editRow(editBtn));
+        }
+
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => deleteRow(deleteBtn));
+        }
+
+        if (checkbox) {
+            checkbox.addEventListener('change', () => {
+                toggleRowButtons(checkbox);
+                updateSelectAllCheckbox();
+            });
+        }
+    });
+
+    // Оновлюємо головний чекбокс для нових рядків
+    updateSelectAllCheckbox();
+}
+
+
+function renderPaginationButtons() {
+    const totalPages = Math.ceil(studentsData.length / rowsPerPage);
+    const pagesContainer = document.querySelector(".pages");
+    pagesContainer.innerHTML = `<button onclick="changePage(-1)">&lt;</button>`;
+
+    for (let i = 1; i <= totalPages; i++) {
+        pagesContainer.innerHTML += `<button class="page-btn${i === currentPage ? ' active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+
+    pagesContainer.innerHTML += `<button onclick="changePage(1)">&gt;</button>`;
+}
+
+function updatePaginationButtons() {
+    document.querySelectorAll('.page-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (parseInt(btn.textContent) === currentPage) {
+            btn.classList.add('active');
+        }
+    });
+}
+
 
 function updateButtons() {
     const checkboxes = Array.from(document.querySelectorAll('.rowCheckbox'));
@@ -157,14 +199,23 @@ function updateButtons() {
     checkboxes.forEach(cb => toggleRowButtons(cb));
 }
 
-function updateSelectAllCheckbox() {
-    const checkboxes = Array.from(getRowCheckboxes());
-    const allChecked = checkboxes.length && checkboxes.every(cb => cb.checked);
-    const someChecked = checkboxes.length && checkboxes.some(cb => cb.checked);
 
-    selectAllCheckbox.checked = allChecked;
-    selectAllCheckbox.indeterminate = !allChecked && someChecked;
+function updateSelectAllCheckbox() {
+    const rowCheckboxes = document.querySelectorAll(".rowCheckbox");
+    const mainCheckbox = document.getElementById("selectAll");
+    if (!rowCheckboxes.length) {
+        mainCheckbox.checked = false;
+        mainCheckbox.indeterminate = false;
+        return;
+    }
+    const total = rowCheckboxes.length;
+    const checkedCount = [...rowCheckboxes].filter(cb => cb.checked).length;
+
+    mainCheckbox.checked = (checkedCount === total);
+    mainCheckbox.indeterminate = (checkedCount > 0 && checkedCount < total);
 }
+
+
 
 function handleOk() {
     const form = document.getElementById("studentForm");
@@ -306,6 +357,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadStudents();
 });
+
+function changePage(step) {
+    const totalPages = Math.ceil(studentsData.length / rowsPerPage);
+    const newPage = currentPage + step;
+    if (newPage >= 1 && newPage <= totalPages) {
+        currentPage = newPage;
+        renderPage(currentPage);
+        updatePaginationButtons();
+    }
+}
+
+function goToPage(pageNumber) {
+    const totalPages = Math.ceil(studentsData.length / rowsPerPage);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+        currentPage = pageNumber;
+        renderPage(currentPage);
+        updatePaginationButtons();
+    }
+}
+
 
 // Глобальні прив'язки
 window.handleOk = handleOk;
