@@ -1,4 +1,5 @@
 const selectAllCheckbox = document.getElementById("selectAll");
+
 function getRowCheckboxes() {
     return document.querySelectorAll(".rowCheckbox");
 }
@@ -19,25 +20,9 @@ function toggleRowButtons(checkbox) {
     }
 }
 
-function deleteSelected() {
-    const checkedRows = document.querySelectorAll(".rowCheckbox:checked");
-    if (checkedRows.length > 0) {
-        if (checkedRows.length > 1) {
-            checkedRows.forEach(checkbox => checkbox.closest("tr").remove());
-            updateButtons();
-            updateSelectAllCheckbox();
-            attachCheckboxListeners();
-        } else {
-            const firstCheckedRow = checkedRows[0].closest("tr");
-            showConfirmDelete(firstCheckedRow);
-        }
-    }
-}
-
 function editRow(btn) {
     const row = btn.closest("tr");
     const checkbox = row.querySelector(".rowCheckbox");
-    console.log("Edit clicked. Checkbox checked:", checkbox?.checked);
     if (checkbox && checkbox.checked) {
         openModal(row);
     } else {
@@ -107,7 +92,7 @@ function loadStudents() {
             const tbody = document.querySelector('#studentsTable tbody');
             tbody.innerHTML = "";
 
-            students.forEach((student, index) => {
+            students.forEach(student => {
                 const row = document.createElement('tr');
                 row.setAttribute("data-id", student.id);
                 row.innerHTML = `
@@ -118,20 +103,24 @@ function loadStudents() {
                     <td>${student.birthday}</td>
                     <td class="status"><span class="status-dot ${student.status === 'active' ? 'green' : 'gray'}"></span></td>
                     <td class="option">
-                        <img src="edit.png" alt="Edit" class="edit-btn">
-                        <img src="delete.png" alt="Delete" class="delete-btn">
+                        <img src="edit.png" alt="Edit" class="edit-btn" disabled>
+                        <img src="delete.png" alt="Delete" class="delete-btn" disabled>
                     </td>
                 `;
                 tbody.appendChild(row);
 
-                // Прив’язка до edit кнопки
                 const editBtn = row.querySelector('.edit-btn');
+                const deleteBtn = row.querySelector('.delete-btn');
+                const checkbox = row.querySelector('.rowCheckbox');
+
                 if (editBtn) {
                     editBtn.addEventListener('click', () => editRow(editBtn));
                 }
 
-                // Прив’язка чекбоксів
-                const checkbox = row.querySelector('.rowCheckbox');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => deleteRow(deleteBtn));
+                }
+
                 if (checkbox) {
                     checkbox.addEventListener('change', () => {
                         toggleRowButtons(checkbox);
@@ -141,10 +130,9 @@ function loadStudents() {
                 }
             });
 
-            // Прив'язка для головного чекбокса — один раз
             const selectAll = document.getElementById("selectAll");
             if (selectAll && !selectAll.dataset.bound) {
-                selectAll.addEventListener("change", function () {
+                selectAll.addEventListener("change", () => {
                     const allCheckboxes = getRowCheckboxes();
                     allCheckboxes.forEach(checkbox => {
                         checkbox.checked = selectAll.checked;
@@ -152,7 +140,7 @@ function loadStudents() {
                     });
                     updateButtons();
                 });
-                selectAll.dataset.bound = "true"; // помітка, щоб не прив'язувати повторно
+                selectAll.dataset.bound = "true";
             }
 
             updateButtons();
@@ -163,26 +151,104 @@ function loadStudents() {
         });
 }
 
+function updateButtons() {
+    const checkboxes = Array.from(document.querySelectorAll('.rowCheckbox'));
+    const anyChecked = checkboxes.some(cb => cb.checked);
+    checkboxes.forEach(cb => toggleRowButtons(cb));
+}
 
+function updateSelectAllCheckbox() {
+    const checkboxes = Array.from(getRowCheckboxes());
+    const allChecked = checkboxes.length && checkboxes.every(cb => cb.checked);
+    const someChecked = checkboxes.length && checkboxes.some(cb => cb.checked);
+
+    selectAllCheckbox.checked = allChecked;
+    selectAllCheckbox.indeterminate = !allChecked && someChecked;
+}
 
 function handleOk() {
     const form = document.getElementById("studentForm");
     if (form) form.dispatchEvent(new Event("submit"));
 }
 
-function attachCheckboxListeners() {
-    const checkboxes = document.querySelectorAll('.rowCheckbox');
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateButtons);
-    });
+function closeConfirmModal() {
+    const modal = document.getElementById("confirmDeleteModal");
+    if (modal) modal.style.display = "none";
 }
 
-function updateButtons() {
-    const anyChecked = Array.from(document.querySelectorAll('.rowCheckbox')).some(cb => cb.checked);
-    document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => {
-        btn.disabled = !anyChecked;
-    });
+function showConfirmDelete(row = null) {
+    const modal = document.getElementById("confirmDeleteModal");
+    const confirmMessage = document.getElementById("confirmMessage");
+
+    if (row) {
+        const fullName = row.cells[2].textContent.trim();
+        window.studentsToDelete = [{ id: row.getAttribute("data-id"), name: fullName }];
+        confirmMessage.innerHTML = `Are you sure you want to delete student <strong>${fullName}</strong>?`;
+    } else {
+        const checkedRows = Array.from(document.querySelectorAll(".rowCheckbox:checked"));
+        window.studentsToDelete = checkedRows.map(cb => {
+            const tr = cb.closest("tr");
+            return {
+                id: tr.getAttribute("data-id"),
+                name: tr.cells[2].textContent.trim()
+            };
+        });
+
+        if (studentsToDelete.length === 0) {
+            alert("No students selected for deletion.");
+            return;
+        }
+
+        if (studentsToDelete.length === 1) {
+            confirmMessage.innerHTML = `Are you sure you want to delete student <strong>${studentsToDelete[0].name}</strong>?`;
+        } else {
+            const namesList = studentsToDelete.map(s => `<strong>${s.name}</strong>`).join(", ");
+            confirmMessage.innerHTML = `Are you sure you want to delete the following students: ${namesList}?`;
+        }
+    }
+
+    modal.style.display = "block";
 }
+
+
+window.confirmDelete = async function () {
+    if (!studentsToDelete || studentsToDelete.length === 0) {
+        alert("Немає студентів для видалення");
+        return;
+    }
+
+    try {
+        const response = await fetch('delete_students.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: studentsToDelete.map(s => s.id) })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            closeConfirmModal();
+            loadStudents();
+        } else {
+            alert("Помилка: " + (result.error || "Невідомо"));
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Серверна помилка.");
+    }
+};
+
+window.deleteRow = function (btn) {
+    const row = btn.closest("tr");
+
+    const checkbox = row.querySelector(".rowCheckbox");
+
+    if (checkbox && checkbox.checked) {        
+        showConfirmDelete(); 
+    } else {
+        alert("Виберіть студента, щоб видалити його!");
+    }
+};
+
 
 document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("addStudent");
@@ -194,9 +260,7 @@ document.addEventListener("DOMContentLoaded", function () {
         okButton.addEventListener("click", handleOk);
     }
 
-    closeButtons.forEach(btn => {
-        btn.addEventListener("click", closeModal);
-    });
+    closeButtons.forEach(btn => btn.addEventListener("click", closeModal));
 
     if (studentForm) {
         studentForm.addEventListener("submit", async function (e) {
@@ -213,10 +277,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 birthday: document.getElementById('birthday').value
             };
 
-            if (isEditing) {
-                formData.id = studentId;
-            }
-
+            if (isEditing) formData.id = studentId;
             const url = isEditing ? 'update_student.php' : 'add_student.php';
 
             try {
@@ -243,16 +304,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    loadStudents(); // initial load
+    loadStudents();
 });
-
-function updateSelectAllCheckbox() {
-    const allCheckboxes = getRowCheckboxes();
-    const allChecked = allCheckboxes.length > 0 && Array.from(allCheckboxes).every(checkbox => checkbox.checked);
-    const someChecked = allCheckboxes.length > 0 && Array.from(allCheckboxes).some(checkbox => checkbox.checked);
-    selectAllCheckbox.checked = allChecked;
-    selectAllCheckbox.indeterminate = !allChecked && someChecked;
-}
 
 // Глобальні прив'язки
 window.handleOk = handleOk;
@@ -261,6 +314,12 @@ window.closeModal = closeModal;
 window.displayErrors = displayErrors;
 window.loadStudents = loadStudents;
 window.editRow = editRow;
+
+
+
+
+
+
 
 
 /*
