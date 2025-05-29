@@ -6,8 +6,8 @@
 
     <!-- Логотип -->
     <div class="logo-container"> 
-        <a href="../public/students.html">
-            <img src="../public/logo.png" alt="Logo - Dragon and Book">
+        <a href="students.html">
+            <img src="logo.png" alt="Logo - Dragon and Book">
         </a>
     </div>
 
@@ -16,26 +16,26 @@
         <div class="icon-container">
             <div class="icon" id="bellIcon">
                 <a href="messages.html" onclick="clearNotificationIndicator()">
-                    <img src="../public/bell.png" alt="Notification Bell">
+                    <img src="bell.png" alt="Notification Bell">
                 </a>
                 <div id="notificationInd" class="notification-ind"></div>
                 <div class="dropdown">
                     <div class="notification-item">
-                        <img src="../public/profile-icon-png-898.png" alt="Admin Profile Icon">
+                        <img src="profile-icon-png-898.png" alt="Admin Profile Icon">
                         <div class="notification-text">
                             <span class="name"> Admin </span>
                             <span class="message"> Hello!</span>
                         </div>
                     </div>
                     <div class="notification-item">
-                        <img src="../public/profile-icon-png-898.png" alt="Anna S. Profile Icon">
+                        <img src="profile-icon-png-898.png" alt="Anna S. Profile Icon">
                         <div class="notification-text">
                             <span class="name"> Anna S. </span>
                             <span class="message"> Hello!</span>
                         </div>
                     </div>
                     <div class="notification-item">
-                        <img src="../public/profile-icon-png-898.png" alt="Maria T. Profile Icon">
+                        <img src="profile-icon-png-898.png" alt="Maria T. Profile Icon">
                         <div class="notification-text">
                             <span class="name"> Maria T. </span>                
                             <span class="message"> Hello!</span>
@@ -48,7 +48,7 @@
         <!-- Профіль -->
         <div class="profile-container">
             <div class="profile">
-                <img src="../public/profile.png" alt="User Profile Icon">
+                <img src="profile.png" alt="User Profile Icon">
                 <span class="profile-name"> Bohdana Fedorchuk</span>
 
                 <div class="dropdown">
@@ -58,24 +58,6 @@
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById("logoutBtn").addEventListener("click", async function () {
-            try {
-                const response = await fetch("logout.php");
-                const data = await response.json();
-        
-                if (data.success) {
-                    // Показати форму логіну
-                    document.getElementById("loginModal").style.display = "block";
-                }
-            } catch (error) {
-                console.error("Logout failed:", error);
-            }
-        });
-        </script>
-        
-
 
 </header>
 

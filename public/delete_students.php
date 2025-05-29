@@ -6,7 +6,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 $ids = $data['ids'] ?? [];
 
 if (empty($ids) || !is_array($ids)) {
-    http_response_code(400);
+    http_response_code(400); // (Bad Request)
     echo json_encode(["error" => "Невірний запит"]);
     exit;
 }

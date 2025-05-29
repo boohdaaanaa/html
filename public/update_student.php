@@ -29,7 +29,6 @@ if (empty($data['birthday'])) {
     }
 }
 
-// Дублікат, виключаючи самого себе
 if (empty($errors)) {
     $query = "SELECT COUNT(*) FROM students WHERE name = :name AND surname = :surname AND birthday = :birthday AND id != :id";
     $stmt = $db->prepare($query);

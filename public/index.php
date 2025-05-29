@@ -1,11 +1,10 @@
 <?php
-session_start();
+session_start(); 
 
 require_once '../config/database.php';
 require_once '../controllers/AuthController.php';
 require_once '../controllers/StudentController.php';
 
-// Initialize database connection
 $database = new Database();
 $db = $database->getConnection();
 
@@ -16,7 +15,6 @@ if ($db === null) {
 $page = $_GET['page'] ?? 'login';
 $action = $_GET['action'] ?? '';
 
-// Handle AJAX request to check login status
 if ($action === 'check_login') {
     $response = [
         'isLoggedIn' => isset($_SESSION['user']),
@@ -27,7 +25,6 @@ if ($action === 'check_login') {
     exit;
 }
 
-// Route requests
 switch ($page) {
     case 'login':
         $controller = new AuthController($db);

@@ -14,8 +14,7 @@ class StudentController {
             header('Location: index.php?page=login');
             exit;
         }
-        // Redirect to the static HTML page
-        header('/students.html');
+        header('Location: /students.html');
         exit;
     }
 }

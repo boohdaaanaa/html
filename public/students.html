@@ -17,13 +17,13 @@
  
     <div class = "container">
     <!--Меню-->
-    <nav class = "sidebar">
-        <ul>
-            <a href = "../public/index.html" class = "nav-link">Dashboard</a>
-            <a href = "../public/students.html" class = "nav-link">Students</a>
-            <a href = "../public/tasks.html" class = "nav-link">Tasks</a>
-        </ul>
-    </nav>
+    <nav class="sidebar">
+    <ul>
+        <a href="/" class="nav-link">Dashboard</a>
+        <a href="/students.html" class="nav-link">Students</a>
+        <a href="/tasks.html" class="nav-link">Tasks</a>
+    </ul>
+</nav>
 
     <!--add-button-->
     <div class="students-container">
@@ -144,31 +144,27 @@
     </div>
   </div>
 
-  <script>
-   fetch('header.html')
+<script>
+  fetch('header.html')
     .then(response => response.text())
     .then(data => {
-        document.getElementById('header-container').innerHTML = data;
+      document.getElementById('header-container').innerHTML = data;
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (event) {
+  event.preventDefault();
+  // Перенаправляємо браузер на PHP-файл:
+  window.location.href = '/index.php';
+});
 
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", async function () {
-                try {
-                    const response = await fetch("logout.php");
-                    const data = await response.json();
 
-                    if (data.success) {
-                        window.location.href = "index.php";
-                    }
-                } catch (error) {
-                    console.error("Logout failed:", error);
-                }
-            });
-        }
+      } else {
+        console.error('Logout button not found');
+      }
     })
-    .catch(error => console.error('Error header.html:', error));
+    .catch(error => console.error('Error loading header.html:', error));
 </script>
-
+<!--
 <script>
     fetch('get_students.php')
     .then(response => response.json())
@@ -199,11 +195,41 @@
     })
     .catch(error => console.error('Помилка при завантаженні студентів:', error));
 </script>
+-->
+
+<script>
+    fetch('/students')
+    .then(response => response.json())
+    .then(students => {
+        const tbody = document.querySelector('#studentsTable tbody');
+        tbody.innerHTML = "";
+        students.forEach((student, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="checkbox" id="rowCheckbox${index + 1}" class="rowCheckbox"></td>
+                <td>${student.group_name}</td>
+                <td>${student.name}</td>
+                <td>${student.gender}</td>
+                <td>${student.birthday}</td>
+                <td class="status"><span class="status-dot ${student.status === 'active' ? 'green' : 'gray'}"></span></td>
+                <td class="option">
+                    <img src="edit.png" alt="Edit" class="edit-btn">
+                    <img src="delete.png" alt="Delete" class="delete-btn">
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        updateButtons();
+        updateSelectAllCheckbox();
+        attachCheckboxListeners();
+    })
+    .catch(error => console.error('Помилка при завантаженні студентів:', error));
+</script>
 
 
 
-
-<script src="scripts.js"></script>
+<script src="/scripts.js"></script>
 
 
 
