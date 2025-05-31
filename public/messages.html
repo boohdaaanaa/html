@@ -63,16 +63,41 @@
 <script>
 const socket = io('http://localhost:3000');
 let currentRoom = '';
-let currentUser = 'Bohdana';
+let currentUser = null;
 let allStudents = [];
 
+// Завантажуємо інформацію про поточного користувача
+async function loadCurrentUser() {
+  try {
+    const response = await fetch('/get_user.php', {
+      credentials: 'include'
+    });
+    const data = await response.json();
+    if (data.success && data.user) {
+      currentUser = data.user;
+      console.log('Current user:', currentUser);
+      
+      // Підписуємося на сповіщення
+      socket.emit('subscribeToNotifications', currentUser.id);
+    }
+  } catch (error) {
+    console.error('Error loading current user:', error);
+  }
+}
+
+// Ініціалізація
+document.addEventListener('DOMContentLoaded', function() {
+  loadCurrentUser();
+});
+
+// Ваш існуючий код для завантаження студентів та ініціалізації чатів...
 const chatRoomList = document.getElementById('chat-room-list');
 const membersList = document.querySelector('.member-list');
 
 fetch('/students')
   .then(res => res.json())
   .then(students => {
-    console.log('✅ Студенти завантажені:', students); // Для відладки
+    console.log('✅ Студенти завантажені:', students);
     allStudents = students;
     initRandomRooms(students);
   })
@@ -104,10 +129,15 @@ function createChatRoom(room) {
 
 async function joinRoom(name, members) {
   currentRoom = name;
+  
+  // Оновлюємо URL для правильної роботи сповіщень
+  const newUrl = `${window.location.pathname}?chat_id=${name}`;
+  window.history.pushState({}, '', newUrl);
+  
   document.getElementById('room-name').innerText = name;
   document.getElementById('chat-window').style.display = 'flex';
 
-  // Очистити повідомлення та мемберів
+  // Решта вашого коду для joinRoom...
   const messagesContainer = document.getElementById('messages');
   messagesContainer.innerHTML = '';
   membersList.innerHTML = '';
@@ -134,7 +164,8 @@ async function joinRoom(name, members) {
   } catch (error) {
     console.error('Error loading messages:', error);
   }
-}
+} 
+
 
 function showAddMemberModal(room) {
   const select = document.createElement('select');
@@ -169,14 +200,20 @@ function showAddMemberModal(room) {
 
 document.getElementById('sendBtn').onclick = () => {
   const input = document.getElementById('messageInput');
+  const text = input.value.trim();
+  
+  if (!text || !currentUser) return;
+
   const msg = {
     chatroomId: currentRoom,
-    authorId: 1, 
-    text: input.value
+    authorId: currentUser.id, // Використовуємо реальний ID користувача
+    text: text
   };
+  
   socket.emit('sendMessage', msg);
   input.value = '';
 };
+
 
 socket.on('newMessage', addMessage);
 

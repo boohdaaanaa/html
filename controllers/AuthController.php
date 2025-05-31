@@ -9,7 +9,7 @@ class AuthController {
     }
 
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {           
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
 
@@ -17,7 +17,9 @@ class AuthController {
             if ($user) {
                 session_start();
                 $_SESSION['user'] = $user;
-                header('Location: index.php?page=students');
+                // Debug: Log session after setting
+                file_put_contents('login_session.log', print_r($_SESSION, true));
+                header('Location: /index.html');
                 exit;
             } else {
                 $error = "Invalid login credentials";
@@ -31,7 +33,8 @@ class AuthController {
     public function logout() {
         session_start();
         session_destroy();
-        header('Location: index.php?page=login');
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
         exit;
     }
 }

@@ -54,29 +54,70 @@
    
 
   <script>
-    fetch('header.html')
-     .then(response => response.text())
-     .then(data => {
-         document.getElementById('header-container').innerHTML = data;
- 
-         const logoutBtn = document.getElementById("logoutBtn");
-         if (logoutBtn) {
-             logoutBtn.addEventListener("click", async function () {
-                 try {
-                     const response = await fetch("logout.php");
-                     const data = await response.json();
- 
-                     if (data.success) {
-                      window.location.href = "index.php";
+fetch('header.html')
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('header-container').innerHTML = data;
+
+        // Завантажуємо інформацію про користувача після завантаження хедера
+        loadUserInfo();
+
+        // Налаштовуємо обробник для кнопки логауту
+        const logoutBtn = document.getElementById("logoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", async function () {
+                try {
+                    const response = await fetch("/logout");
+                    const data = await response.json();
+
+                    if (data.success) {
+                        window.location.href = "/login.php";
                     }
-                 } catch (error) {
-                     console.error("Logout failed:", error);
-                 }
-             });
-         }
-     })
-     .catch(error => console.error('Error header.html:', error)); 
- </script>
+                } catch (error) {
+                    console.error("Logout failed:", error);
+                    // Fallback - перенаправляємо на логін навіть при помилці
+                    window.location.href = "/login.php";
+                }
+            });
+        }
+    })
+    .catch(error => console.error('Error loading header.html:', error));
+
+// Функція для завантаження інформації про користувача
+async function loadUserInfo() {
+    try {
+        const response = await fetch('/getuser.php');
+        const data = await response.json();
+        
+        const usernameDisplay = document.getElementById('username-display');
+        
+        if (data.success && data.user) {
+            // Відображаємо ім'я та прізвище користувача
+            const fullName = `${data.user.name} ${data.user.surname}`;
+            usernameDisplay.textContent = fullName;
+            
+            // Зберігаємо дані користувача для використання в чаті та інших місцях
+            window.currentUser = data.user;
+            
+            // Оновлюємо змінну currentUser в messages.html якщо вона існує
+            if (typeof currentUser !== 'undefined') {
+                currentUser = data.user.name;
+            }
+        } else {
+            usernameDisplay.textContent = 'Guest';
+            console.log('User not logged in, redirecting to login page...');
+            // Можна розкоментувати для автоматичного перенаправлення
+            // window.location.href = '/login.php';
+        }
+    } catch (error) {
+        console.error('Error loading user info:', error);
+        const usernameDisplay = document.getElementById('username-display');
+        if (usernameDisplay) {
+            usernameDisplay.textContent = 'Guest';
+        }
+    }
+}
+</script>
 
 <script src="/scripts.js"></script>
 

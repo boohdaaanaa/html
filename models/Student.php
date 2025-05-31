@@ -9,11 +9,11 @@ class Student {
 
     // Authenticate user
     public function authenticate($username, $password) {
-        $query = "SELECT * FROM students WHERE name = :name AND birthday = :birthday"; // Формує SQL-запит з параметрами
-        $stmt = $this->conn->prepare($query);   // prepare($query)	Готує запит до виконання
-        $stmt->bindParam(':name', $username);   // Прив’язує значення до параметрів
+        $query = "SELECT id, name, surname, gender, birthday, status, group_name FROM students WHERE name = :name AND birthday = :birthday";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':name', $username);
         $stmt->bindParam(':birthday', $password);
-        $stmt->execute(); // Виконує запит до бази
+        $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 

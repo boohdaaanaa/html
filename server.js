@@ -4,35 +4,26 @@ import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 import mysql from 'mysql2/promise';
-import Message from './models/Message.js';
-import Chatroom from './models/Chatroom.js';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import Message from './models/Message.js'; 
+import Chatroom from './models/Chatroom.js'; 
 
-// Створення Express та HTTP серверу
+// Setup
 const app = express();
 const server = http.createServer(app);
-
-// Ініціалізація Socket.IO
 const io = new Server(server, {
-  cors: { origin: '*' }
+  cors: {
+    origin: 'http://localhost:3000',
+    credentials: true
+  }
 });
-
-// Для ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Глобальна змінна для MySQL з'єднання
 let mysqlConn;
 
-// Підключення до MongoDB
-mongoose.connect('mongodb://127.0.0.1:27017/chat_app')
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
-
-// Підключення до MySQL
+// MySQL Connection
 async function connectToMySQL() {
   try {
     mysqlConn = await mysql.createConnection({
@@ -46,15 +37,23 @@ async function connectToMySQL() {
     console.error('❌ MySQL connection error:', error);
   }
 }
-
 connectToMySQL();
 
+// MongoDB Connection
+mongoose.connect('mongodb://127.0.0.1:27017/chat_app')
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
+
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3001',
+  credentials: true
+}));
 app.use(express.json());
-// Проксі PHP до Apache (завжди перед express.static)
+
+// PHP Proxy Middleware
 app.use(/.*\.php$/, createProxyMiddleware({
-  target: 'http://127.0.0.1:80/html/public', // або 8080, якщо треба
+  target: 'http://127.0.0.1:80/html/public',
   changeOrigin: true,
   pathRewrite: { '^/': '/' },
   onProxyReq: (proxyReq, req, res) => {
@@ -66,7 +65,7 @@ app.use(/.*\.php$/, createProxyMiddleware({
   }
 }));
 
-// API для отримання студентів
+// API Routes
 app.get('/students', async (req, res) => {
   try {
     if (!mysqlConn) throw new Error('MySQL connection not available');
@@ -81,15 +80,55 @@ app.get('/students', async (req, res) => {
   }
 });
 
-// Статичні файли (тільки HTML, CSS, JS)
+// Роут для отримання інформації про користувача
+app.get('/get_user.php', (req, res) => {
+    // Проксування запиту до PHP файлу
+    res.redirect('/get_user.php');
+});
+
+// Роут для логіну
+app.post('/AuthController.php', (req, res) => {
+    // Проксування запиту до PHP файлу
+    res.redirect('/AuthController.php');
+});
+
+// Роут для логауту
+app.get('/logout', async (req, res) => {
+    try {
+        // Можна додати логіку очищення сесії тут
+        // або проксувати до PHP
+        const response = await fetch('http://127.0.0.1:80/html/public/logout.php');
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        res.json({ success: true }); // Fallback
+    }
+});
+
+// Додай цей middleware для кращої обробки PHP файлів
+app.use('/get_user.php', createProxyMiddleware({
+    target: 'http://127.0.0.1:80/html/public',
+    changeOrigin: true,
+    onProxyReq: (proxyReq, req, res) => {
+        console.log(`Proxying getuser.php request`);
+    }
+}));
+
+app.use('/AuthController.php', createProxyMiddleware({
+    target: 'http://127.0.0.1:80/html/public',
+    changeOrigin: true,
+    onProxyReq: (proxyReq, req, res) => {
+        console.log(`Proxying login.php request`);
+    }
+}));
+
+// Static Files
 app.use(express.static(path.join(__dirname, 'public'), {
   extensions: ['html', 'js', 'css'],
   index: false
 }));
 
-
-
-// Статичні HTML сторінки
+// Static HTML Pages
 const staticPages = ['index', 'students', 'tasks', 'messages', 'header'];
 staticPages.forEach(page => {
   app.get(`/${page}.html`, (req, res) => {
@@ -97,30 +136,19 @@ staticPages.forEach(page => {
   });
 });
 
+// Root Route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.redirect('/index.php');
 });
 
-// Обробка JS-файлів
-app.get(/.*\.js$/, (req, res) => {
-  res.type('application/javascript').sendFile(path.join(__dirname, 'public', req.path));
-});
-
-// ВИДАЛЯЄМО це - не потрібно окремо обробляти index.php
-// Він повинен оброблятися через PHP-FPM як і інші PHP файли
-
-
-// Логаут
-
-
-// Віддача PHP скриптів (як файлів)
+// PHP Scripts
 ['add_student.php', 'update_student.php', 'delete_students.php'].forEach(file => {
   app.post(`/${file}`, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', file));
   });
 });
 
-// Створення чату
+// Chatroom and Message Routes
 app.post('/chatrooms', async (req, res) => {
   try {
     const { name, members } = req.body;
@@ -136,7 +164,6 @@ app.post('/chatrooms', async (req, res) => {
   }
 });
 
-// Отримання чатів користувача
 app.get('/chatrooms/:studentId', async (req, res) => {
   try {
     const studentId = parseInt(req.params.studentId);
@@ -148,7 +175,6 @@ app.get('/chatrooms/:studentId', async (req, res) => {
   }
 });
 
-// Отримання повідомлень чату
 app.get('/messages/:chatroomId', async (req, res) => {
   try {
     const messages = await Message.find({ chatroomId: req.params.chatroomId }).sort({ timestamp: 1 });
@@ -159,15 +185,13 @@ app.get('/messages/:chatroomId', async (req, res) => {
   }
 });
 
-// WebSocket логіка
+// WebSocket Logic
 io.on('connection', (socket) => {
   console.log('🔌 Користувач підключився');
-
   socket.on('joinRoom', (chatroomId) => {
     socket.join(chatroomId);
     console.log(`👥 Користувач приєднався до чату: ${chatroomId}`);
   });
-
   socket.on('sendMessage', async ({ chatroomId, authorId, text }) => {
     try {
       const message = new Message({
@@ -177,19 +201,17 @@ io.on('connection', (socket) => {
         timestamp: new Date()
       });
       await message.save();
-
       io.to(chatroomId).emit('newMessage', message);
     } catch (error) {
       console.error('❌ Send message error:', error);
     }
   });
-
   socket.on('disconnect', () => {
     console.log('🚫 Користувач вийшов');
   });
 });
 
-// Глобальний обробник помилок
+// Error Handler
 app.use((err, req, res, next) => {
   console.error('❌ Server error:', err);
   res.status(500).json({
@@ -198,8 +220,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Запуск сервера
-const PORT = process.env.PORT || 3001; // Змінили з 3000 на 3001
+// Start Server
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`✅ Сервер запущено: http://localhost:${PORT}`);
 });
