@@ -1,1 +1,639 @@
-helooooooo
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
+    <title>Messages</title>
+</head>
+
+<body>
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <ul>
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/students.html" class="nav-link">Students</a>
+                <a href="/tasks.html" class="nav-link">Tasks</a>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Messages</h1>
+
+            <div class="chat-layout">
+                <!-- Chat rooms -->
+                <div class="chat-rooms">
+                    <div class="chat-header">
+                        <span>Chat rooms</span>
+                        <button class="new-chat-btn" id="newChatBtn">+ New chat room</button>
+                    </div>
+                    <ul class="chat-room-list" id="chat-room-list">
+                        <li class="loading">Loading chat rooms...</li>
+                    </ul>
+                </div>
+
+                <!-- Chat content -->
+                <div class="chat-window" id="chat-window" style="display: none;">
+                    <div class="chat-room-info">
+                        <div class="chat-room-name" id="room-name">Select a chat room</div>
+                        <div class="chat-members">
+                            <span>Members:</span>
+                            <div class="member-list" id="member-list">
+                                <!-- Members will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="messages">
+                        <!-- Messages will be populated here -->
+                    </div>
+
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" placeholder="Type your message..." />
+                        <button class="send-btn" id="sendBtn">▶</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Chat Room Modal -->
+    <div id="newChatModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Create New Chat Room</h2>
+            <form id="newChatForm">
+                <div class="form-group">
+                    <label for="chatName">Chat Room Name:</label>
+                    <input type="text" id="chatName" required>
+                </div>
+                <div class="form-group">
+                    <label for="participants">Participants (Student IDs, comma separated):</label>
+                    <input type="text" id="participants" placeholder="1,2,3" required>
+                </div>
+                <button type="submit">Create Chat Room</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let socket;
+        let currentUser = null;
+        let currentChatRoom = null;
+
+        // Initialize socket connection
+        function initSocket() {
+            socket = io('http://localhost:3000');
+
+            socket.on('connect', () => {
+                console.log('Connected to server');
+            });
+
+            socket.on('new-message', (message) => {
+                if (currentChatRoom && message.chatRoomId === currentChatRoom._id) {
+                    displayMessage(message);
+                }
+            });
+
+            socket.on('message-error', (error) => {
+                console.error('Message error:', error);
+                alert('Failed to send message');
+            });
+        }
+
+        // Get current user from session
+        async function getCurrentUser() {
+            try {
+                const response = await fetch('current-user.php');
+                if (response.ok) {
+                    const user = await response.json();
+                    return user;
+                }
+            } catch (error) {
+                console.error('Error getting current user:', error);
+            }
+            return null;
+        }
+
+        // Load chat rooms for current user
+        async function loadChatRooms() {
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/chatrooms/${currentUser.id}`);
+                const chatRooms = await response.json();
+
+                const chatRoomList = document.getElementById('chat-room-list');
+                chatRoomList.innerHTML = '';
+
+                if (chatRooms.length === 0) {
+                    chatRoomList.innerHTML = '<li class="no-chats">No chat rooms found</li>';
+                    return;
+                }
+
+                chatRooms.forEach(room => {
+                    const li = document.createElement('li');
+                    li.className = 'chat-room-item';
+                    li.innerHTML = `
+                        <div class="room-name">${room.name}</div>
+                        <div class="room-participants">${room.participants.length} members</div>
+                    `;
+                    li.addEventListener('click', () => selectChatRoom(room));
+                    chatRoomList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading chat rooms:', error);
+                document.getElementById('chat-room-list').innerHTML = '<li class="error">Error loading chat rooms</li>';
+            }
+        }
+
+        // Select and load a chat room
+        async function selectChatRoom(room) {
+            // Leave previous room
+            if (currentChatRoom) {
+                socket.emit('leave-room', currentChatRoom._id);
+            }
+
+            currentChatRoom = room;
+
+            // Join new room
+            socket.emit('join-room', room._id);
+
+            // Update UI
+            document.getElementById('room-name').textContent = room.name;
+            document.getElementById('chat-window').style.display = 'block';
+
+            // Update members list
+            const memberList = document.getElementById('member-list');
+            memberList.innerHTML = room.participants.map(participant =>
+                `<span class="member-icon" title="${participant.name}">👤</span>`
+            ).join('');
+
+            // Load messages
+            await loadMessages(room._id);
+
+            // Mark room as active
+            document.querySelectorAll('.chat-room-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
+        // Load messages for a chat room
+        async function loadMessages(chatRoomId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/messages/${chatRoomId}`);
+                const messages = await response.json();
+
+                const messagesContainer = document.getElementById('messages');
+                messagesContainer.innerHTML = '';
+
+                messages.forEach(message => {
+                    displayMessage(message);
+                });
+
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
+        // Display a message in the chat
+        function displayMessage(message) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.author.id === currentUser.id ? 'own-message' : 'other-message'}`;
+
+            const timestamp = new Date(message.createdAt).toLocaleTimeString();
+
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="author">${message.author.name}</span>
+                    <span class="timestamp">${timestamp}</span>
+                </div>
+                <div class="message-text">${message.text}</div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Send a message
+        function sendMessage() {
+            if (!currentChatRoom || !currentUser) return;
+
+            const messageInput = document.getElementById('messageInput');
+            const text = messageInput.value.trim();
+
+            if (!text) return;
+
+            socket.emit('send-message', {
+                chatRoomId: currentChatRoom._id,
+                authorId: currentUser.id,
+                text: text
+            });
+
+            messageInput.value = '';
+        }
+
+        // Create new chat room
+        async function createChatRoom(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('chatName').value.trim();
+            const participantsInput = document.getElementById('participants').value.trim();
+
+            if (!name || !participantsInput) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Parse participant IDs
+            const participantIds = participantsInput.split(',')
+                .map(id => parseInt(id.trim()))
+                .filter(id => !isNaN(id));
+
+            if (participantIds.length === 0) {
+                alert('Please enter valid participant IDs (numbers only)');
+                return;
+            }
+
+            // Add current user to participants if not already included
+            if (!participantIds.includes(currentUser.id)) {
+                participantIds.push(currentUser.id);
+            }
+
+            console.log('Creating chat room with data:', {
+                name: name,
+                participants: participantIds,
+                currentUser: currentUser
+            });
+
+            try {
+                const response = await fetch('http://localhost:3000/api/chatrooms', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        participants: participantIds
+                    })
+                });
+
+                console.log('Response status:', response.status);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Chat room created:', result);
+                    document.getElementById('newChatModal').style.display = 'none';
+                    document.getElementById('newChatForm').reset();
+                    loadChatRooms(); // Reload chat rooms
+                } else {
+                    const errorText = await response.text();
+                    console.error('Server error:', errorText);
+                    try {
+                        const error = JSON.parse(errorText);
+                        alert('Error creating chat room: ' + error.error);
+                    } catch (e) {
+                        alert('Error creating chat room: ' + errorText);
+                    }
+                }
+            } catch (error) {
+                console.error('Network error creating chat room:', error);
+                alert('Network error creating chat room');
+            }
+        }
+
+        // Initialize the application
+        async function init() {
+            // Get current user
+            currentUser = await getCurrentUser();
+
+            if (!currentUser) {
+                alert('Please log in to access chat');
+                window.location.href = '/index.php?page=login';
+                return;
+            }
+
+            // Initialize socket connection
+            initSocket();
+
+            // Load chat rooms
+            await loadChatRooms();
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            init();
+
+            // Send message on button click
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+
+            // Send message on Enter key
+            document.getElementById('messageInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // New chat room modal
+            document.getElementById('newChatBtn').addEventListener('click', () => {
+                document.getElementById('newChatModal').style.display = 'block';
+            });
+
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('newChatModal').style.display = 'none';
+            });
+
+            document.getElementById('newChatForm').addEventListener('submit', createChatRoom);
+
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                const modal = document.getElementById('newChatModal');
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Load header
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+
+                const logoutBtn = document.getElementById("logoutBtn");
+                if (logoutBtn) {
+                    logoutBtn.addEventListener("click", async function () {
+                        try {
+                            const response = await fetch("logout.php");
+                            const data = await response.json();
+
+                            if (data.success) {
+                                window.location.href = "index.php";
+                            }
+                        } catch (error) {
+                            console.error("Logout failed:", error);
+                        }
+                    });
+                }
+            })
+            .catch(error => console.error('Error header.html:', error));
+    </script>
+
+    <style>
+        .chat-layout {
+            display: flex;
+            height: 600px;
+            border: 1px solid #ddd;
+            margin-top: 20px;
+        }
+
+        .chat-rooms {
+            width: 300px;
+            border-right: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .new-chat-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .chat-room-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 550px;
+            overflow-y: auto;
+        }
+
+        .chat-room-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .chat-room-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .chat-room-item.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .room-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .room-participants {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .chat-room-item.active .room-participants {
+            color: #ccc;
+        }
+
+        .chat-window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-room-info {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+
+        .chat-room-name {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .chat-members {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .member-list {
+            display: flex;
+            gap: 5px;
+        }
+
+        .member-icon {
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+
+        .own-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .other-message {
+            background: #f1f3f4;
+            color: #333;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .own-message .message-header {
+            color: #ccc;
+        }
+
+        .other-message .message-header {
+            color: #666;
+        }
+
+        .author {
+            font-weight: bold;
+        }
+
+        .message-text {
+            font-size: 14px;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background: #f8f9fa;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .send-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .send-btn:hover {
+            background: #0056b3;
+        }
+
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 400px;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .loading,
+        .no-chats,
+        .error {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+    </style>
+
+    <script src="scripts.js"></script>
+</body>
+
+</html>

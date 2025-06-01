@@ -1,80 +1,472 @@
-<header class="header">
-    <!-- Бургер-меню -->
-    <div class="burger-menu" onclick="toggleSidebar()">
-        <span class="burger-icon">☰</span>
-    </div>
+<!DOCTYPE html>
+<html lang="uk">
 
-    <!-- Логотип -->
-    <div class="logo-container">
-        <a href="../public/students.html">
-            <img src="../public/logo.png" alt="Logo - Dragon and Book">
-        </a>
-    </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header with Notifications</title>
+    <style>
+        /* Анімація для дзвіночка */
+        @keyframes bellShake {
 
-    <div class="menu">
-        <!-- Повідомлення -->
-        <div class="icon-container">
-            <div class="icon" id="bellIcon">
-                <a href="messages.html" onclick="clearNotificationIndicator()">
-                    <img src="../public/bell.png" alt="Notification Bell">
-                </a>
-                <div id="notificationInd" class="notification-ind"></div>
-                <div class="dropdown">
-                    <div class="notification-item">
-                        <img src="../public/profile-icon-png-898.png" alt="Admin Profile Icon">
-                        <div class="notification-text">
-                            <span class="name"> Admin </span>
-                            <span class="message"> Hello!</span>
-                        </div>
-                    </div>
-                    <div class="notification-item">
-                        <img src="../public/profile-icon-png-898.png" alt="Anna S. Profile Icon">
-                        <div class="notification-text">
-                            <span class="name"> Anna S. </span>
-                            <span class="message"> Hello!</span>
-                        </div>
-                    </div>
-                    <div class="notification-item">
-                        <img src="../public/profile-icon-png-898.png" alt="Maria T. Profile Icon">
-                        <div class="notification-text">
-                            <span class="name"> Maria T. </span>
-                            <span class="message"> Hello!</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Профіль -->
-        <div class="profile-container">
-            <div class="profile">
-                <img src="../public/profile.png" alt="User Profile Icon">
-                <span class="profile-name"> Bohdana Fedorchuk</span>
-
-                <div class="dropdown">
-                    <div class="profile-item"> Profile </div>
-                    <div class="profile-item" id="logoutBtn">Log out</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById("logoutBtn").addEventListener("click", async function () {
-            try {
-                const response = await fetch("logout.php");
-                const data = await response.json();
-
-                if (data.success) {
-                    // Показати форму логіну
-                    document.getElementById("loginModal").style.display = "block";
-                }
-            } catch (error) {
-                console.error("Logout failed:", error);
+            0%,
+            100% {
+                transform: rotate(0deg);
             }
-        });
-    </script>
 
+            25% {
+                transform: rotate(-10deg);
+            }
 
+            50% {
+                transform: rotate(10deg);
+            }
 
-</header>
+            75% {
+                transform: rotate(-5deg);
+            }
+        }
+
+        .bell-animation {
+            animation: bellShake 0.6s ease-in-out 3;
+        }
+
+        /* Стилі для індикатора сповіщень */
+        .notification-ind {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background-color: #ff4444;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .notification-ind.active {
+            display: block;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Стилі для dropdown повідомлень */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .notification-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .notification-text {
+            flex: 1;
+        }
+
+        .notification-text .name {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .notification-text .message {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .notification-text .time {
+            color: #999;
+            font-size: 12px;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .no-notifications {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+        }
+
+        /* Основні стилі хедера */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .burger-menu {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .logo-container img {
+            height: 40px;
+        }
+
+        .menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .icon-container {
+            position: relative;
+        }
+
+        .icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .icon img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .profile-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <!-- Бургер-меню -->
+        <div class="burger-menu" onclick="toggleSidebar()">
+            <span class="burger-icon">☰</span>
+        </div>
+
+        <!-- Логотип -->
+        <div class="logo-container">
+            <a href="../public/students.html">
+                <img src="../public/logo.png" alt="Logo - Dragon and Book">
+            </a>
+        </div>
+
+        <div class="menu">
+            <!-- Повідомлення -->
+            <div class="icon-container">
+                <div class="icon" id="bellIcon" onclick="toggleNotifications()">
+                    <img src="../public/bell.png" alt="Notification Bell">
+                    <div id="notificationInd" class="notification-ind"></div>
+                    <div class="dropdown" id="notificationDropdown">
+                        <div class="no-notifications" id="noNotifications">
+                            Немає нових повідомлень
+                        </div>
+                        <div id="notificationsList">
+                            <!-- Динамічно додавані сповіщення -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Профіль -->
+            <div class="profile-container">
+                <div class="profile">
+                    <img src="../public/profile.png" alt="User Profile Icon">
+                    <span class="profile-name">Bohdana Fedorchuk</span>
+
+                    <div class="dropdown">
+                        <div class="profile-item">Profile</div>
+                        <div class="profile-item" id="logoutBtn">Log out</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            // Глобальні змінні
+            let socket;
+            let currentUserId = null; // Встановіть ID поточного користувача
+            let notifications = [];
+            let isOnMessagesPage = false;
+            let currentChatRoomId = null;
+
+            // Ініціалізація Socket.IO
+            function initializeSocket() {
+                socket = io();
+
+                // Аутентифікація користувача (потрібно встановити currentUserId)
+                if (currentUserId) {
+                    socket.emit('authenticate', currentUserId);
+                }
+
+                // Обробка нових сповіщень
+                socket.on('new-notification', (notification) => {
+                    console.log('Нове сповіщення:', notification);
+                    handleNewNotification(notification);
+                });
+
+                // Обробка нових повідомлень в активному чаті
+                socket.on('new-message', (message) => {
+                    // Якщо користувач в іншому чаті або не на сторінці повідомлень
+                    if (message.chatRoomId !== currentChatRoomId || !isOnMessagesPage) {
+                        // Створити сповіщення
+                        const notification = {
+                            chatRoomId: message.chatRoomId,
+                            chatRoomName: 'Чат', // Можна отримати назву чату з бази
+                            message: {
+                                text: message.text,
+                                author: message.author,
+                                createdAt: message.createdAt
+                            }
+                        };
+                        handleNewNotification(notification);
+                    }
+                });
+            }
+
+            // Обробка нового сповіщення
+            function handleNewNotification(notification) {
+                // Додати сповіщення до масиву
+                notifications.unshift(notification);
+
+                // Обмежити кількість сповіщень
+                if (notifications.length > 10) {
+                    notifications = notifications.slice(0, 10);
+                }
+
+                // Показати індикатор
+                showNotificationIndicator();
+
+                // Анімація дзвіночка
+                animateBell();
+
+                // Оновити список сповіщень
+                updateNotificationsList();
+            }
+
+            // Анімація дзвіночка
+            function animateBell() {
+                const bellIcon = document.getElementById('bellIcon');
+                bellIcon.classList.add('bell-animation');
+
+                setTimeout(() => {
+                    bellIcon.classList.remove('bell-animation');
+                }, 1800); // 0.6s * 3 повтори
+            }
+
+            // Показати індикатор сповіщень
+            function showNotificationIndicator() {
+                const indicator = document.getElementById('notificationInd');
+                indicator.classList.add('active');
+            }
+
+            // Приховати індикатор сповіщень
+            function hideNotificationIndicator() {
+                const indicator = document.getElementById('notificationInd');
+                indicator.classList.remove('active');
+            }
+
+            // Перемикання dropdown сповіщень
+            function toggleNotifications() {
+                const dropdown = document.getElementById('notificationDropdown');
+                dropdown.classList.toggle('show');
+
+                // Якщо відкриваємо dropdown, приховати індикатор
+                if (dropdown.classList.contains('show')) {
+                    hideNotificationIndicator();
+                }
+            }
+
+            // Оновлення списку сповіщень
+            function updateNotificationsList() {
+                const notificationsList = document.getElementById('notificationsList');
+                const noNotifications = document.getElementById('noNotifications');
+
+                if (notifications.length === 0) {
+                    noNotifications.style.display = 'block';
+                    notificationsList.innerHTML = '';
+                    return;
+                }
+
+                noNotifications.style.display = 'none';
+
+                const notificationsHTML = notifications.map(notification => {
+                    const time = new Date(notification.message.createdAt).toLocaleTimeString('uk-UA', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    return `
+                        <div class="notification-item" onclick="openChat('${notification.chatRoomId}')">
+                            <img src="../public/profile-icon-png-898.png" alt="Profile Icon">
+                            <div class="notification-text">
+                                <span class="name">${notification.message.author.fullName}</span>
+                                <span class="message">${notification.message.text}</span>
+                                <span class="time">${time}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                notificationsList.innerHTML = notificationsHTML;
+            }
+
+            // Відкриття чату при натисканні на сповіщення
+            function openChat(chatRoomId) {
+                // Приховати dropdown
+                document.getElementById('notificationDropdown').classList.remove('show');
+
+                // Видалити сповіщення для цього чату
+                notifications = notifications.filter(n => n.chatRoomId !== chatRoomId);
+                updateNotificationsList();
+
+                // Перехід на сторінку повідомлень з відкритим чатом
+                window.location.href = `messages.html?chatId=${chatRoomId}`;
+            }
+
+            // Функції для відстеження поточної сторінки та чату
+            function setCurrentPage(page) {
+                isOnMessagesPage = (page === 'messages');
+
+                if (socket) {
+                    if (isOnMessagesPage) {
+                        socket.emit('enter-messages-page');
+                    } else {
+                        socket.emit('leave-messages-page');
+                    }
+                }
+            }
+
+            function setCurrentChatRoom(chatRoomId) {
+                currentChatRoomId = chatRoomId;
+
+                if (socket && chatRoomId) {
+                    socket.emit('join-room', chatRoomId);
+                } else if (socket && !chatRoomId) {
+                    if (currentChatRoomId) {
+                        socket.emit('leave-room', currentChatRoomId);
+                    }
+                }
+            }
+
+            // Встановлення ID користувача (викликати після автентифікації)
+            function setCurrentUser(userId) {
+                currentUserId = userId;
+                if (socket) {
+                    socket.emit('authenticate', userId);
+                }
+            }
+
+            // Закриття dropdown при кліку поза ним
+            document.addEventListener('click', (event) => {
+                const bellIcon = document.getElementById('bellIcon');
+                const dropdown = document.getElementById('notificationDropdown');
+
+                if (!bellIcon.contains(event.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            // Ініціалізація при завантаженні сторінки
+            document.addEventListener('DOMContentLoaded', () => {
+                initializeSocket();
+
+                // Встановити поточну сторінку
+                const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
+                setCurrentPage(currentPage);
+
+                // Якщо це сторінка повідомлень, перевірити чи є chatId в URL
+                if (currentPage === 'messages') {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const chatId = urlParams.get('chatId');
+                    if (chatId) {
+                        setCurrentChatRoom(chatId);
+                    }
+                }
+            });
+
+            // Logout функціональність
+            document.getElementById("logoutBtn").addEventListener("click", async function () {
+                try {
+                    const response = await fetch("logout.php");
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Показати форму логіну
+                        document.getElementById("loginModal").style.display = "block";
+                    }
+                } catch (error) {
+                    console.error("Logout failed:", error);
+                }
+            });
+
+            function toggleSidebar() {
+                // Функція для відкриття/закриття бічної панелі
+                console.log('Toggle sidebar');
+            }
+        </script>
+    </header>
+</body>
+
+</html>
