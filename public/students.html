@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,219 +9,176 @@
     <!-- <link rel="manifest" href="manifest.json"> -->
 
     <title>Student</title>
-   
+
 </head>
 
 <body>
 
-    <div id="header-container"></div>      
- 
-    <div class = "container">
-    <!--Меню-->
-    <nav class="sidebar">
-    <ul>
-        <a href="/" class="nav-link">Dashboard</a>
-        <a href="/students.html" class="nav-link">Students</a>
-        <a href="/tasks.html" class="nav-link">Tasks</a>
-    </ul>
-</nav>
+    <div id="header-container"></div>
 
-    <!--add-button-->
-    <div class="students-container">
-    <h2 class = "name">Students</h2>
-        <div class="table-header">
-            <button class="add-student-btn" onclick="openModal()">+</button>
-        </div>
-           
-    <!-- Таблиця -->
-    <table id="studentsTable">
-        <thead>
-          <tr>                
-              <th><input type="checkbox" id="selectAll"></th>
-              <th scope="col">Group</th>
-              <th scope="col">Name</th>
-              <th scope="col">Gender</th>
-              <th scope="col">Birthday</th>
-              <th scope="col">Status</th>
-              <th scope="col">Option</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Студенти будуть тут -->
-        </tbody>
-      </table>
-      
+    <div class="container">
+        <!--Меню-->
+        <nav class="sidebar">
+            <ul>
+                <a href="../public/index.html" class="nav-link">Dashboard</a>
+                <a href="../public/students.html" class="nav-link">Students</a>
+                <a href="../public/tasks.html" class="nav-link">Tasks</a>
+            </ul>
+        </nav>
 
-        <!--Table pages-->
-        <div class="pages">
-            <button onclick="changePage(-1)">&lt;</button>
-            <button class="page-btn active" onclick="goToPage(1)">1</button>
-            <button class="page-btn" onclick="goToPage(2)">2</button>
-            <button class="page-btn" onclick="goToPage(3)">3</button>
-            <button class="page-btn" onclick="goToPage(4)">4</button>
-            <button onclick="changePage(1)">&gt;</button>
-        </div>
-
-
-    <!--form for add student-->
-    <div id="addStudent" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Add student</h3>
-                <span class="close" onclick="closeModal()">×</span>
+        <!--add-button-->
+        <div class="students-container">
+            <h2 class="name">Students</h2>
+            <div class="table-header">
+                <button class="add-student-btn" onclick="openModal()">+</button>
             </div>
-            <form class="modal-body" id="studentForm" novalidate>
-                <input type="hidden" id="studentId" name="studentId">
-    
-                <label for="group">Group</label>
-                <select id="group" name="group" required>
-                    <option value="" disabled selected>Select Group</option>
-                    <option value="PZ-21">PZ-21</option>
-                    <option value="PZ-22">PZ-22</option>
-                </select>
-                <span class="error-message" id="group-error"></span>
-    
-                <label for="name">First name</label>
-                <input type="text" id="name" name="name" required>
-                <span class="error-message" id="name-error"></span>
-    
-                <label for="surname">Last name</label>
-                <input type="text" id="surname" name="surname" required>
-                <span class="error-message" id="surname-error"></span>
-    
-                <label for="gender">Gender</label>
-                <select id="gender" name="gender" required>
-                    <option value="" disabled selected>Select Gender</option>
-                    <option value="M">Male</option>
-                    <option value="F">Female</option>
-                </select>
-                <span class="error-message" id="gender-error"></span>
-    
-                <label for="birthday">Birthday</label>
-                <input type="date" id="birthday" name="birthday">
-                <span class="error-message" id="birthday-error"></span>
-    
-                <div class="modal-buttons">
-                    <button type="button" class="btn btn-ok" onclick="handleOk()">OK</button>
-                    <button id="submitStudent" type="submit" class="btn btn-create">Create</button>
+
+            <!-- Таблиця -->
+            <table id="studentsTable">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAll"></th>
+                        <th scope="col">Group</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Birthday</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Option</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Студенти будуть тут -->
+                </tbody>
+            </table>
+
+
+            <!--Table pages-->
+            <div class="pages">
+                <button onclick="changePage(-1)">&lt;</button>
+                <button class="page-btn active" onclick="goToPage(1)">1</button>
+                <button class="page-btn" onclick="goToPage(2)">2</button>
+                <button class="page-btn" onclick="goToPage(3)">3</button>
+                <button class="page-btn" onclick="goToPage(4)">4</button>
+                <button onclick="changePage(1)">&gt;</button>
+            </div>
+
+
+            <!--form for add student-->
+            <div id="addStudent" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modalTitle">Add student</h3>
+                        <span class="close" onclick="closeModal()">×</span>
+                    </div>
+                    <form class="modal-body" id="studentForm" novalidate>
+                        <input type="hidden" id="studentId" name="studentId">
+
+                        <label for="group">Group</label>
+                        <select id="group" name="group" required>
+                            <option value="" disabled selected>Select Group</option>
+                            <option value="PZ-21">PZ-21</option>
+                            <option value="PZ-22">PZ-22</option>
+                        </select>
+                        <span class="error-message" id="group-error"></span>
+
+                        <label for="name">First name</label>
+                        <input type="text" id="name" name="name" required>
+                        <span class="error-message" id="name-error"></span>
+
+                        <label for="surname">Last name</label>
+                        <input type="text" id="surname" name="surname" required>
+                        <span class="error-message" id="surname-error"></span>
+
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                        <span class="error-message" id="gender-error"></span>
+
+                        <label for="birthday">Birthday</label>
+                        <input type="date" id="birthday" name="birthday">
+                        <span class="error-message" id="birthday-error"></span>
+
+                        <div class="modal-buttons">
+                            <button type="button" class="btn btn-ok" onclick="handleOk()">OK</button>
+                            <button id="submitStudent" type="submit" class="btn btn-create">Create</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-        </div>
-    </div>
-    </div>
-
-
-    <!--modal form delete-->
-    <div id="confirmDeleteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Warning</h3>
-                <span class="close" onclick="closeConfirmModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p id="confirmMessage"></p>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn btn-cancel" onclick="closeConfirmModal()">Cancel</button>
-                <button class="btn btn-ok" onclick="confirmDelete()">OK</button>
             </div>
         </div>
-    </div>
-  
 
 
-    <!-- Login Modal -->
-<div id="loginModal" class="modal">
-    <div class="modal-content">      
-      <h2>Login</h2>
-      <form id="loginForm">
-        <label for="username">Login:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="text" id="password" name="password" placeholder="YYYY-MM-DD" required>
-        <button type="submit">Log in</button>
-      </form>
-      <div id="loginError" style="color:red; display:none;">Incorrect data.</div>
-    </div>
-  </div>
+        <!--modal form delete-->
+        <div id="confirmDeleteModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Warning</h3>
+                    <span class="close" onclick="closeConfirmModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmMessage"></p>
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn btn-cancel" onclick="closeConfirmModal()">Cancel</button>
+                    <button class="btn btn-ok" onclick="confirmDelete()">OK</button>
+                </div>
+            </div>
+        </div>
 
-<script>
-fetch('header.html')
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('header-container').innerHTML = data;
 
-        // Завантажуємо інформацію про користувача після завантаження хедера
-        loadUserInfo();
 
-        // Налаштовуємо обробник для кнопки логауту
-        const logoutBtn = document.getElementById("logoutBtn");
-        if (logoutBtn) {
-            logoutBtn.addEventListener("click", async function () {
-                try {
-                    const response = await fetch("/logout");
-                    const data = await response.json();
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-content">
+                <h2>Login</h2>
+                <form id="loginForm">
+                    <label for="username">Login:</label>
+                    <input type="text" id="username" name="username" required>
+                    <label for="password">Password:</label>
+                    <input type="text" id="password" name="password" placeholder="YYYY-MM-DD" required>
+                    <button type="submit">Log in</button>
+                </form>
+                <div id="loginError" style="color:red; display:none;">Incorrect data.</div>
+            </div>
+        </div>
 
-                    if (data.success) {
-                        window.location.href = "/login.php";
+        <script>
+            fetch('header.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('header-container').innerHTML = data;
+
+                    const logoutBtn = document.getElementById("logoutBtn");
+                    if (logoutBtn) {
+                        logoutBtn.addEventListener("click", async function () {
+                            try {
+                                const response = await fetch("logout.php");
+                                const data = await response.json();
+
+                                if (data.success) {
+                                    window.location.href = "index.php";
+                                }
+                            } catch (error) {
+                                console.error("Logout failed:", error);
+                            }
+                        });
                     }
-                } catch (error) {
-                    console.error("Logout failed:", error);
-                    // Fallback - перенаправляємо на логін навіть при помилці
-                    window.location.href = "/login.php";
-                }
-            });
-        }
-    })
-    .catch(error => console.error('Error loading header.html:', error));
+                })
+                .catch(error => console.error('Error header.html:', error));
+        </script>
 
-// Функція для завантаження інформації про користувача
-async function loadUserInfo() {
-    try {
-        const response = await fetch('/getuser.php');
-        const data = await response.json();
-        
-        const usernameDisplay = document.getElementById('username-display');
-        
-        if (data.success && data.user) {
-            // Відображаємо ім'я та прізвище користувача
-            const fullName = `${data.user.name} ${data.user.surname}`;
-            usernameDisplay.textContent = fullName;
-            
-            // Зберігаємо дані користувача для використання в чаті та інших місцях
-            window.currentUser = data.user;
-            
-            // Оновлюємо змінну currentUser в messages.html якщо вона існує
-            if (typeof currentUser !== 'undefined') {
-                currentUser = data.user.name;
-            }
-        } else {
-            usernameDisplay.textContent = 'Guest';
-            console.log('User not logged in, redirecting to login page...');
-            // Можна розкоментувати для автоматичного перенаправлення
-            // window.location.href = '/login.php';
-        }
-    } catch (error) {
-        console.error('Error loading user info:', error);
-        const usernameDisplay = document.getElementById('username-display');
-        if (usernameDisplay) {
-            usernameDisplay.textContent = 'Guest';
-        }
-    }
-}
-</script>
-
-
-<!--
-<script>
-    fetch('get_students.php')
-    .then(response => response.json())
-    .then(students => {
-        const tbody = document.querySelector('#studentsTable tbody');
-        tbody.innerHTML = "";
-        students.forEach((student, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+        <script>
+            fetch('get_students.php')
+                .then(response => response.json())
+                .then(students => {
+                    const tbody = document.querySelector('#studentsTable tbody');
+                    tbody.innerHTML = "";
+                    students.forEach((student, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
                 <td><input type="checkbox" id="rowCheckbox${index + 1}" class="rowCheckbox"></td>
                 <td>${student.group_name}</td>
                 <td>${student.name}</td>
@@ -232,51 +190,21 @@ async function loadUserInfo() {
                     <img src="delete.png" alt="Delete" class="delete-btn">
                 </td>
             `;
-            tbody.appendChild(row);
-        });
+                        tbody.appendChild(row);
+                    });
 
-        // Оновлюємо стан після завантаження
-        updateButtons();
-        updateSelectAllCheckbox();
-        attachCheckboxListeners();
-    })
-    .catch(error => console.error('Помилка при завантаженні студентів:', error));
-</script>
--->
-
-<script>
-    fetch('/students')
-    .then(response => response.json())
-    .then(students => {
-        const tbody = document.querySelector('#studentsTable tbody');
-        tbody.innerHTML = "";
-        students.forEach((student, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><input type="checkbox" id="rowCheckbox${index + 1}" class="rowCheckbox"></td>
-                <td>${student.group_name}</td>
-                <td>${student.name}</td>
-                <td>${student.gender}</td>
-                <td>${student.birthday}</td>
-                <td class="status"><span class="status-dot ${student.status === 'active' ? 'green' : 'gray'}"></span></td>
-                <td class="option">
-                    <img src="edit.png" alt="Edit" class="edit-btn">
-                    <img src="delete.png" alt="Delete" class="delete-btn">
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        updateButtons();
-        updateSelectAllCheckbox();
-        attachCheckboxListeners();
-    })
-    .catch(error => console.error('Помилка при завантаженні студентів:', error));
-</script>
+                    // Оновлюємо стан після завантаження
+                    updateButtons();
+                    updateSelectAllCheckbox();
+                    attachCheckboxListeners();
+                })
+                .catch(error => console.error('Помилка при завантаженні студентів:', error));
+        </script>
 
 
 
-<script src="/scripts.js"></script>
+
+        <script src="scripts.js"></script>
 
 
 

@@ -1,0 +1,14 @@
+Array
+(
+    [user] => Array
+        (
+            [id] => 19
+            [name] => Bohdana
+            [surname] => kp
+            [gender] => M
+            [birthday] => 2006-03-17
+            [status] => active
+            [group_name] => PZ-21
+        )
+
+)

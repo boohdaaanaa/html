@@ -91,23 +91,23 @@ function displayErrors(errors) {
 }
 
 function loadStudents() {
-    fetch('/students')  // ① Відправляє HTTP-запит до PHP-файлу на сервері
-        .then(response => response.json())  // ② Очікує відповідь і перетворює її з JSON
-        .then(students => {                 // ③ Отримує масив студентів
-            studentsData = students;       // ④ Зберігає дані в змінну
-            renderPage(currentPage);       // ⑤ Малює таблицю на поточній сторінці
-            renderPaginationButtons();     // ⑥ Малює кнопки пагінації
+    fetch('get_students.php')
+        .then(response => response.json())
+        .then(students => {
+            studentsData = students;
+            renderPage(currentPage);
+            renderPaginationButtons();
         })
-        .catch(error => {                  // ⑦ Обробка помилки
+        .catch(error => {
             console.error("Помилка при завантаженні студентів:", error);
         });
 }
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const mainCheckbox = document.getElementById("selectAll");
     if (mainCheckbox) {
         mainCheckbox.addEventListener("change", () => {
+            // Знаходимо всі чекбокси, що відображаються на поточній сторінці
             const rowCheckboxes = document.querySelectorAll(".rowCheckbox");
             rowCheckboxes.forEach(cb => {
                 cb.checked = mainCheckbox.checked;
@@ -166,6 +166,7 @@ function renderPage(pageNumber) {
         }
     });
 
+    // Оновлюємо головний чекбокс для нових рядків
     updateSelectAllCheckbox();
 }
 
