@@ -6,150 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Header with Notifications</title>
     <style>
-        /* Анімація для дзвіночка */
-        @keyframes bellShake {
-
-            0%,
-            100% {
-                transform: rotate(0deg);
-            }
-
-            25% {
-                transform: rotate(-10deg);
-            }
-
-            50% {
-                transform: rotate(10deg);
-            }
-
-            75% {
-                transform: rotate(-5deg);
-            }
-        }
-
-        .bell-animation {
-            animation: bellShake 0.6s ease-in-out 3;
-        }
-
-        /* Стилі для індикатора сповіщень */
-        .notification-ind {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 12px;
-            height: 12px;
-            background-color: #ff4444;
-            border-radius: 50%;
-            display: none;
-        }
-
-        .notification-ind.active {
-            display: block;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.7;
-                transform: scale(1.1);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Стилі для dropdown повідомлень */
-        .dropdown {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            min-width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-
-        .dropdown.show {
-            display: block;
-        }
-
-        .notification-item {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .notification-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .notification-item:last-child {
-            border-bottom: none;
-        }
-
-        .notification-item img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .notification-text {
-            flex: 1;
-        }
-
-        .notification-text .name {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        .notification-text .message {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .notification-text .time {
-            color: #999;
-            font-size: 12px;
-            display: block;
-            margin-top: 4px;
-        }
-
-        .no-notifications {
-            padding: 20px;
-            text-align: center;
-            color: #666;
-        }
-
-        /* Основні стилі хедера */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .burger-menu {
             cursor: pointer;
-            font-size: 24px;
+            font-size: 20px;
         }
 
         .logo-container img {
@@ -169,6 +37,13 @@
         .icon {
             position: relative;
             cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .icon:hover {
+            background-color: #f0f0f0;
         }
 
         .icon img {
@@ -176,23 +51,208 @@
             height: 24px;
         }
 
+        /* Індикатор сповіщень */
+        .notification-ind {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            background: #ff4444;
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .notification-ind.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Анімація пульсації */
+        .notification-ind.pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Анімація тряски дзвіночка */
+        .icon.shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px) rotate(-5deg);
+            }
+
+            75% {
+                transform: translateX(5px) rotate(5deg);
+            }
+        }
+
+        /* Dropdown сповіщень */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Показуємо dropdown при hover на icon-container для сповіщень */
+        .icon-container:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Показуємо dropdown при hover на profile-container для профілю */
+        .profile-container:hover .dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .no-notifications {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item.unread {
+            background-color: #e3f2fd;
+            border-left: 3px solid #2196f3;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .notification-chat {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .notification-author {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 2px;
+        }
+
+        .notification-message {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.3;
+        }
+
         .profile-container {
             display: flex;
             align-items: center;
-            gap: 10px;
+            position: relative;
         }
 
         .profile {
             display: flex;
             align-items: center;
-            gap: 10px;
-            position: relative;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .profile:hover {
+            background-color: #f0f0f0;
         }
 
         .profile img {
             width: 32px;
             height: 32px;
             border-radius: 50%;
+        }
+
+        .profile-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .profile-container .dropdown {
+            right: 0;
+            min-width: 150px;
+        }
+
+        .profile-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .profile-item:hover {
+            background-color: #f8f9fa;
         }
     </style>
 </head>
@@ -214,7 +274,7 @@
         <div class="menu">
             <!-- Повідомлення -->
             <div class="icon-container">
-                <div class="icon" id="bellIcon" onclick="toggleNotifications()">
+                <div class="icon" id="bellIcon" onclick="openMessagesPage()">
                     <img src="../public/bell.png" alt="Notification Bell">
                     <div id="notificationInd" class="notification-ind"></div>
                     <div class="dropdown" id="notificationDropdown">
@@ -234,239 +294,338 @@
                     <img src="../public/profile.png" alt="User Profile Icon">
                     <span class="profile-name">Bohdana Fedorchuk</span>
 
-                    <div class="dropdown">
-                        <div class="profile-item">Profile</div>
+                    <div class="dropdown" id="profileDropdown">
+                        <div class="profile-item" onclick="openProfile()">Profile</div>
                         <div class="profile-item" id="logoutBtn">Log out</div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <script src="/socket.io/socket.io.js"></script>
-        <script>
-            // Глобальні змінні
-            let socket;
-            let currentUserId = null; // Встановіть ID поточного користувача
-            let notifications = [];
-            let isOnMessagesPage = false;
-            let currentChatRoomId = null;
-
-            // Ініціалізація Socket.IO
-            function initializeSocket() {
-                socket = io();
-
-                // Аутентифікація користувача (потрібно встановити currentUserId)
-                if (currentUserId) {
-                    socket.emit('authenticate', currentUserId);
-                }
-
-                // Обробка нових сповіщень
-                socket.on('new-notification', (notification) => {
-                    console.log('Нове сповіщення:', notification);
-                    handleNewNotification(notification);
-                });
-
-                // Обробка нових повідомлень в активному чаті
-                socket.on('new-message', (message) => {
-                    // Якщо користувач в іншому чаті або не на сторінці повідомлень
-                    if (message.chatRoomId !== currentChatRoomId || !isOnMessagesPage) {
-                        // Створити сповіщення
-                        const notification = {
-                            chatRoomId: message.chatRoomId,
-                            chatRoomName: 'Чат', // Можна отримати назву чату з бази
-                            message: {
-                                text: message.text,
-                                author: message.author,
-                                createdAt: message.createdAt
-                            }
-                        };
-                        handleNewNotification(notification);
-                    }
-                });
-            }
-
-            // Обробка нового сповіщення
-            function handleNewNotification(notification) {
-                // Додати сповіщення до масиву
-                notifications.unshift(notification);
-
-                // Обмежити кількість сповіщень
-                if (notifications.length > 10) {
-                    notifications = notifications.slice(0, 10);
-                }
-
-                // Показати індикатор
-                showNotificationIndicator();
-
-                // Анімація дзвіночка
-                animateBell();
-
-                // Оновити список сповіщень
-                updateNotificationsList();
-            }
-
-            // Анімація дзвіночка
-            function animateBell() {
-                const bellIcon = document.getElementById('bellIcon');
-                bellIcon.classList.add('bell-animation');
-
-                setTimeout(() => {
-                    bellIcon.classList.remove('bell-animation');
-                }, 1800); // 0.6s * 3 повтори
-            }
-
-            // Показати індикатор сповіщень
-            function showNotificationIndicator() {
-                const indicator = document.getElementById('notificationInd');
-                indicator.classList.add('active');
-            }
-
-            // Приховати індикатор сповіщень
-            function hideNotificationIndicator() {
-                const indicator = document.getElementById('notificationInd');
-                indicator.classList.remove('active');
-            }
-
-            // Перемикання dropdown сповіщень
-            function toggleNotifications() {
-                const dropdown = document.getElementById('notificationDropdown');
-                dropdown.classList.toggle('show');
-
-                // Якщо відкриваємо dropdown, приховати індикатор
-                if (dropdown.classList.contains('show')) {
-                    hideNotificationIndicator();
-                }
-            }
-
-            // Оновлення списку сповіщень
-            function updateNotificationsList() {
-                const notificationsList = document.getElementById('notificationsList');
-                const noNotifications = document.getElementById('noNotifications');
-
-                if (notifications.length === 0) {
-                    noNotifications.style.display = 'block';
-                    notificationsList.innerHTML = '';
-                    return;
-                }
-
-                noNotifications.style.display = 'none';
-
-                const notificationsHTML = notifications.map(notification => {
-                    const time = new Date(notification.message.createdAt).toLocaleTimeString('uk-UA', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-
-                    return `
-                        <div class="notification-item" onclick="openChat('${notification.chatRoomId}')">
-                            <img src="../public/profile-icon-png-898.png" alt="Profile Icon">
-                            <div class="notification-text">
-                                <span class="name">${notification.message.author.fullName}</span>
-                                <span class="message">${notification.message.text}</span>
-                                <span class="time">${time}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                notificationsList.innerHTML = notificationsHTML;
-            }
-
-            // Відкриття чату при натисканні на сповіщення
-            function openChat(chatRoomId) {
-                // Приховати dropdown
-                document.getElementById('notificationDropdown').classList.remove('show');
-
-                // Видалити сповіщення для цього чату
-                notifications = notifications.filter(n => n.chatRoomId !== chatRoomId);
-                updateNotificationsList();
-
-                // Перехід на сторінку повідомлень з відкритим чатом
-                window.location.href = `messages.html?chatId=${chatRoomId}`;
-            }
-
-            // Функції для відстеження поточної сторінки та чату
-            function setCurrentPage(page) {
-                isOnMessagesPage = (page === 'messages');
-
-                if (socket) {
-                    if (isOnMessagesPage) {
-                        socket.emit('enter-messages-page');
-                    } else {
-                        socket.emit('leave-messages-page');
-                    }
-                }
-            }
-
-            function setCurrentChatRoom(chatRoomId) {
-                currentChatRoomId = chatRoomId;
-
-                if (socket && chatRoomId) {
-                    socket.emit('join-room', chatRoomId);
-                } else if (socket && !chatRoomId) {
-                    if (currentChatRoomId) {
-                        socket.emit('leave-room', currentChatRoomId);
-                    }
-                }
-            }
-
-            // Встановлення ID користувача (викликати після автентифікації)
-            function setCurrentUser(userId) {
-                currentUserId = userId;
-                if (socket) {
-                    socket.emit('authenticate', userId);
-                }
-            }
-
-            // Закриття dropdown при кліку поза ним
-            document.addEventListener('click', (event) => {
-                const bellIcon = document.getElementById('bellIcon');
-                const dropdown = document.getElementById('notificationDropdown');
-
-                if (!bellIcon.contains(event.target)) {
-                    dropdown.classList.remove('show');
-                }
-            });
-
-            // Ініціалізація при завантаженні сторінки
-            document.addEventListener('DOMContentLoaded', () => {
-                initializeSocket();
-
-                // Встановити поточну сторінку
-                const currentPage = window.location.pathname.split('/').pop().replace('.html', '');
-                setCurrentPage(currentPage);
-
-                // Якщо це сторінка повідомлень, перевірити чи є chatId в URL
-                if (currentPage === 'messages') {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const chatId = urlParams.get('chatId');
-                    if (chatId) {
-                        setCurrentChatRoom(chatId);
-                    }
-                }
-            });
-
-            // Logout функціональність
-            document.getElementById("logoutBtn").addEventListener("click", async function () {
-                try {
-                    const response = await fetch("logout.php");
-                    const data = await response.json();
-
-                    if (data.success) {
-                        // Показати форму логіну
-                        document.getElementById("loginModal").style.display = "block";
-                    }
-                } catch (error) {
-                    console.error("Logout failed:", error);
-                }
-            });
-
-            function toggleSidebar() {
-                // Функція для відкриття/закриття бічної панелі
-                console.log('Toggle sidebar');
-            }
-        </script>
     </header>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    // notifications.js - Окремий файл для системи сповіщень
+
+    class NotificationManager {
+        constructor() {
+            this.socket = null;
+            this.currentUser = null;
+            this.notifications = [];
+            this.isOnMessagesPage = false;
+            this.currentChatRoomId = null;
+            this.isInitialized = false;
+        }
+
+        // Ініціалізація системи сповіщень
+        async initialize() {
+            if (this.isInitialized) return;
+
+            console.log('Initializing notification system...');
+
+            // Отримуємо поточного користувача
+            this.currentUser = await this.getCurrentUser();
+
+            if (this.currentUser) {
+                this.initSocket();
+            } else {
+                console.log('Could not get current user, adding test notifications');
+                this.addTestNotifications();
+            }
+
+            this.setupEventListeners();
+            this.isInitialized = true;
+
+            console.log('Notification system initialized');
+        }
+
+        // Ініціалізація Socket.IO
+        initSocket() {
+            try {
+                this.socket = io('http://localhost:3000');
+
+                this.socket.on('connect', () => {
+                    console.log('Connected to notification server');
+                    if (this.currentUser) {
+                        this.socket.emit('authenticate', this.currentUser.id);
+                    }
+                });
+
+                // Отримання нових сповіщень
+                this.socket.on('new-notification', (notification) => {
+                    console.log('New notification received:', notification);
+                    this.handleNewNotification(notification);
+                });
+
+                this.socket.on('disconnect', () => {
+                    console.log('Disconnected from notification server');
+                });
+
+                this.socket.on('connect_error', (error) => {
+                    console.error('Socket connection error:', error);
+                });
+
+            } catch (error) {
+                console.error('Failed to initialize socket:', error);
+                // Якщо не вдається підключитися до сокета, додаємо тестові дані
+                this.addTestNotifications();
+            }
+        }
+
+        // Отримання поточного користувача
+        async getCurrentUser() {
+            try {
+                const response = await fetch('current-user.php');
+                if (response.ok) {
+                    return await response.json();
+                }
+            } catch (error) {
+                console.error('Error getting current user:', error);
+            }
+            return null;
+        }
+
+        // Обробка нового сповіщення
+        handleNewNotification(notification) {
+            console.log('Handling notification:', notification);
+            console.log('isOnMessagesPage:', this.isOnMessagesPage, 'currentChatRoomId:', this.currentChatRoomId);
+
+            const shouldShowNotification = !this.isOnMessagesPage || this.currentChatRoomId !== notification.chatRoomId;
+
+            if (shouldShowNotification) {
+                console.log('Adding notification to list');
+                this.notifications.unshift({
+                    id: Date.now(),
+                    chatRoomId: notification.chatRoomId,
+                    chatRoomName: notification.chatRoomName,
+                    author: notification.message.author,
+                    text: notification.message.text,
+                    time: new Date(notification.message.createdAt),
+                    unread: true
+                });
+
+                this.updateNotificationUI();
+                this.showBellAnimation();
+            } else {
+                console.log('Notification skipped due to user being in chat');
+            }
+        }
+
+        // Анімація дзвіночка
+        showBellAnimation() {
+            const bellIcon = document.getElementById('bellIcon');
+            const notificationInd = document.getElementById('notificationInd');
+
+            if (!bellIcon || !notificationInd) {
+                console.warn('Bell icon elements not found');
+                return;
+            }
+
+            // Додаємо анімацію тряски
+            bellIcon.classList.add('shake');
+
+            // Показуємо та анімуємо індикатор
+            notificationInd.classList.add('active', 'pulse');
+
+            // Видаляємо анімацію тряски через 500мс
+            setTimeout(() => {
+                bellIcon.classList.remove('shake');
+            }, 500);
+        }
+
+        // Оновлення UI сповіщень
+        updateNotificationUI() {
+            const notificationsList = document.getElementById('notificationsList');
+            const noNotifications = document.getElementById('noNotifications');
+            const notificationInd = document.getElementById('notificationInd');
+
+            if (!notificationsList || !noNotifications || !notificationInd) {
+                console.warn('Notification UI elements not found');
+                return;
+            }
+
+            console.log('Updating notification UI, notifications:', this.notifications);
+
+            if (this.notifications.length === 0) {
+                notificationsList.innerHTML = '';
+                noNotifications.style.display = 'block';
+                notificationInd.classList.remove('active', 'pulse');
+                return;
+            }
+
+            noNotifications.style.display = 'none';
+
+            const hasUnread = this.notifications.some(n => n.unread);
+            if (hasUnread) {
+                notificationInd.classList.add('active', 'pulse');
+            } else {
+                notificationInd.classList.remove('active', 'pulse');
+            }
+
+            notificationsList.innerHTML = this.notifications.map(notification => `
+            <div class="notification-item ${notification.unread ? 'unread' : ''}" 
+                 onclick="notificationManager.openChat('${notification.chatRoomId}', ${notification.id})">
+                <div class="notification-header">
+                    <div class="notification-chat">${notification.chatRoomName}</div>
+                    <div class="notification-time">${this.formatTime(notification.time)}</div>
+                </div>
+                <div class="notification-author">${notification.author.fullName}</div>
+                <div class="notification-message">${notification.text}</div>
+            </div>
+        `).join('');
+        }
+
+        // Форматування часу
+        formatTime(date) {
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) {
+                return 'щойно';
+            } else if (diff < 3600000) {
+                return Math.floor(diff / 60000) + 'хв';
+            } else if (diff < 86400000) {
+                return Math.floor(diff / 3600000) + 'год';
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+
+        // Встановлення статусу сторінки
+        setPageStatus(isMessages, chatRoomId = null) {
+            this.isOnMessagesPage = isMessages;
+            this.currentChatRoomId = chatRoomId;
+
+            if (this.socket && this.socket.connected) {
+                if (isMessages) {
+                    this.socket.emit('enter-messages-page');
+                    if (chatRoomId) {
+                        this.socket.emit('join-chat', chatRoomId);
+                    }
+                } else {
+                    this.socket.emit('leave-messages-page');
+                    if (this.currentChatRoomId) {
+                        this.socket.emit('leave-chat', this.currentChatRoomId);
+                    }
+                }
+            }
+        }
+
+        // Відкриття чату
+        openChat(chatRoomId, notificationId) {
+            // Позначаємо сповіщення як прочитане
+            const notification = this.notifications.find(n => n.id === notificationId);
+            if (notification) {
+                notification.unread = false;
+            }
+
+            this.updateNotificationUI();
+
+            // Переходимо на сторінку повідомлень
+            window.location.href = `messages.html?chatId=${chatRoomId}`;
+        }
+
+        // Відкриття сторінки повідомлень
+        openMessagesPage() {
+            window.location.href = 'messages.html';
+        }
+
+        // Відкриття профілю
+        openProfile() {
+            window.location.href = 'profile.html';
+        }
+
+        // Додавання тестових сповіщень
+        addTestNotifications() {
+            const testNotifications = [
+                {
+                    id: 1,
+                    chatRoomId: 'room1',
+                    chatRoomName: 'Математика 10-А',
+                    author: { fullName: 'Петренко Олексій' },
+                    text: 'Привіт! Як справи з домашнім завданням?',
+                    time: new Date(Date.now() - 300000),
+                    unread: true
+                },
+                {
+                    id: 2,
+                    chatRoomId: 'room2',
+                    chatRoomName: 'Фізика 10-А',
+                    author: { fullName: 'Іваненко Марія' },
+                    text: 'Не забудьте про контрольну роботу завтра!',
+                    time: new Date(Date.now() - 900000),
+                    unread: true
+                }
+            ];
+
+            this.notifications = testNotifications;
+            this.updateNotificationUI();
+        }
+
+        // Налаштування обробників подій
+        setupEventListeners() {
+            // Logout functionality
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async () => {
+                    try {
+                        const response = await fetch('logout.php');
+                        const data = await response.json();
+                        if (data.success) {
+                            window.location.href = 'index.php';
+                        }
+                    } catch (error) {
+                        console.error('Logout failed:', error);
+                    }
+                });
+            }
+
+            // Тестові повідомлення через деякий час
+            setTimeout(() => {
+                if (this.notifications.length === 0) {
+                    this.addTestNotifications();
+                }
+            }, 2000);
+        }
+
+        // Симуляція нового повідомлення (для тестування)
+        simulateNewMessage() {
+            const testNotification = {
+                chatRoomId: 'test-room',
+                chatRoomName: 'Тестовий чат',
+                message: {
+                    author: { fullName: 'Тестовий користувач' },
+                    text: 'Це тестове повідомлення',
+                    createdAt: new Date().toISOString()
+                }
+            };
+
+            this.handleNewNotification(testNotification);
+        }
+    }
+
+    // Створюємо глобальний екземпляр
+    const notificationManager = new NotificationManager();
+
+    // Глобальні функції для сумісності
+    window.openMessagesPage = () => notificationManager.openMessagesPage();
+    window.openProfile = () => notificationManager.openProfile();
+    window.openChat = (chatRoomId, notificationId) => notificationManager.openChat(chatRoomId, notificationId);
+    window.setPageStatus = (isMessages, chatRoomId) => notificationManager.setPageStatus(isMessages, chatRoomId);
+    window.notificationManager = notificationManager;
+
+    // Автоматична ініціалізація при завантаженні DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing notifications...');
+            notificationManager.initialize();
+        });
+    } else {
+        // DOM вже завантажений
+        console.log('DOM already loaded, initializing notifications...');
+        notificationManager.initialize();
+    }
+    </script>
 </body>
 
 </html>

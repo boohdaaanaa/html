@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="styles.css">
     <!-- <link rel="manifest" href="manifest.json"> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
 
     <title>Student</title>
 
@@ -199,10 +200,12 @@
                     attachCheckboxListeners();
                 })
                 .catch(error => console.error('Помилка при завантаженні студентів:', error));
+
+                 // Відкриття сторінки повідомлень при кліку на дзвіночок
+                    function openMessagesPage() {
+                        window.location.href = 'messages.html';
+                    }
         </script>
-
-
-
 
         <script src="scripts.js"></script>
 
